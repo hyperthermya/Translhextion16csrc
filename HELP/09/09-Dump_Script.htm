@@ -1,0 +1,57 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Dump Script... (command Script/Dump Script...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">Dump Script... (command Script/Dump Script...)</div><br>
+<br>
+This command is used to dump bytes from the file, parse them
+through a Thingy Table, and export them as a readable script.
+These bytes can either be exported to the screen (dialog) or to a
+file. In the dialog you can choose the start offset where the
+dumping begins (the byte at that offset is the first to be dumped)
+and how many bytes to dump (specify either the offset of the last
+byte to dump or the number of bytes including the first byte to
+be dump, and check the appropriate radio button).<br>
+<br>
+If the command is chosen without a selection, then the values in
+the dialog will be set so that the byte at the current offset
+will be cut.<br>
+<br>
+You have the option of dumping a script using <a href="../02/02-Separated-byte_Format.html">&quot;Separated-byte
+Format&quot;</A> (If you read nothing else in this help file, go read
+about this) or as vanilla text as desired. When replacing scripts,
+it is important to check appropriately whether this format was
+used or not on the script file to be replaced. If <a href="../02/02-Separated-byte_Format.html">Separated-byte
+Format</A> was used, the same <b>left enclosure</b> &amp; <b>right enclosure</b>
+characters that were used in the dumping of the script MUST be
+specified (this can be done in Options/Preferences...).<br>
+<br>
+If your script has Dakuten or Handakuten characters in it a prompt will ask if
+you would like to merge them with the characters they modify.&nbsp; This
+procedure creates the script in the same way that Thingy does.&nbsp; Choosing
+this method means the script will lose its punctuation if you attempt to
+re-insert it without making changes to it.&nbsp; Choosing no to this option will
+create a script that can be re-inserted but punctuation characters will be
+separate from the characters they modify. <br>
+<br>
+If you chose to dump the script to the screen then another dialog
+will appear allowing you to view, edit, and reinsert (optional)
+the script. It should be noted that as of this release there is
+no &quot;optimization&quot; of the script when it is reinserted
+and so <a href="../02/02-DTE.html">DTE (Dual Tile Encoding)</A> is not used even where possible.
+If you choose to reinsert a script from this dialog you will be
+warned if the number of bytes to be reinserted is different from
+the number dumped. Currently there is no &quot;true&quot;
+insertion from this dialog, only overwriting so you can choose to
+have excess bytes overwrite existing values or you can truncate
+the inserted script.
+</body>
+</html>

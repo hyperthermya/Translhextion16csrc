@@ -1,0 +1,291 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>History of Changes</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">History of Changes</DIV>
+<p><br>
+<DIV class="title">Whats New in 1.6b?</DIV>&nbsp;
+<P>- Unreleased version.<HR>
+<DIV class="title">Whats New in 1.6?</DIV>&nbsp;
+<p>
+- Added the ability to do search for a hex string as an alternative to text
+using the standard &quot;Find&quot; command<br>
+- Added the option to reset the change color of changed bytes to the default
+byte color upon saving the file<br>
+</p>
+<ul>
+  <p>+ This option is now the default though you can change it as desired</p>
+</ul>
+- Added 2-byte functionality to the ' ^ ' table extension which you can use to highlight
+specific bytes in a user-selectable highlight color<br>
+<ul>+ Syntax is as follows: ^xx<br>
+  + Alternatively, for 2-byte values the syntax is: ^xxxx<br></ul>
+<p>- Added the option to view hex
+offsets in SNES HiROM and LoROM formats<br>
+</p>
+<ul>+ When in a SNES hex mode, all hex inputs will be interpreted in that format<br>
+<ul>~ This includes boomarks and script dump marks added manually or by tables<BR></ul>
+</ul>
+<p>
+- Removed the need to &quot;activate&quot; Thingy Tables, now they are active
+when they are loaded<br>
+- Now the ascii for DTE values is displayed in a different, user-selectable color so they are easy to see<br>
+- Improved the speed of loading a file<br>
+- Changed Automatic Bytes Per Line setting to be turned off when first entering
+Thingy View<br>
+- Changed &quot;Color Settings&quot; dialog to accommodate new colors<br>
+- Fixed the window resizing crashing bug<br>
+- Fixed a problem with partial open that incorrectly displayed the number of
+changed bytes when saving<br>
+- Fixed the problem where highlighting didn't get removed when a new table was
+loaded<br>
+- A number of aesthetic changes have been made<br>
+- The documentation has been updated to reflect new changes</p>
+<P>
+<HR>
+<b>What's New in 1.5?</b></p>
+<P>- By request, a new feature called
+&quot;Thingy IME&quot; allows you to directly enter dynamically table-encoded text
+into a file<br>
+<ul>+  Now you don't have to dump a script to a file or to the screen to edit it<br>
++ You can enter text in insert or overwrite modes<br>
++ Text you enter is encoded on the fly as you type it<br>
++ Load and activate a table and press &lt;ENTER&gt; and you're ready to go<br></ul>
+- After dumping a Japanese script you will now be given the option to merge
+punctuation characters with the characters they modify which produces a more
+Thingy-like script<br>
+- By request, added the ability to hide/show the hex pane for easy script
+viewing<br>
+<ul>+ This mode does not allow editing<br></ul>
+- Now any bytes that get changed are displayed in a different, user-selectable
+color so they are easy to see<br>
+- Extended Thingy Table functionality with ' ^ ' which you can use to highlight
+specific bytes in a user-selectable highlight color<br>
+<ul>+ Syntax is as follows: ^xx<br></ul>
+- Changed &quot;Color Settings&quot; dialog to accommodate new colors<br>
+- Fixed a majority of the selection color bugs<br>
+<ul>+ Selected text color now works as it should<br></ul>
+- Translhextion will now attempt to automatically install the included Japanese font when it
+runs for the first time<br>
+- A number of aesthetic changes have been made<br>
+- The documentation has not only been updated but is now in HTML Help format
+thanks to Kitsune Sniper
+<P>
+<HR>
+<!-- 1.2       -->
+<b>What's New in 1.4?<br>
+</b>
+<br>
+NOTE: <i>The included font must be installed in the system font directory (usually</i> C:\WINDOWS\FONTS
+ or C:\WINNT\FONTS<i>) for most of the new features to work.</i><P>
+
+- Added a custom-made Japanese font which displays Hiragana and Katakana characters in "Thingy view"<br>
+<ul>+ both Shift-JIS and EUC-JIS table files are supported by this feature<br>
++ single Japanese characters (2 bytes) or pairs of Japanese characters (4 bytes) will display correctly<br></ul>
+- Added table conversion between Shift-JIS and EUC-JIS<br>
+<ul>+  tables can also be converted to and from Romaji but there are some bugs here still<br>
++ the loaded table is dynamically converted, saved, and reloaded so backup your table files<br></ul>
+- Changed the behavior of the "Copy" command when "Thingy view"
+ is enabled to copy the script data to the clipboard instead of the ascii data
+<br>
+<ul>+ new line characters don't seem to paste correctly in notepad and
+  other windows programs though it looks fine when saved and viewed in DOS edit<br></ul>
+<br>
+- Added speed hack that speeds up non-japanese script manipulations
+<br>
+<ul>+  automatically assumes ">" if no ! or @ characters are indicated which avoids unnecessary punctuation-movement calculation<br></ul>
+- Fixed a major bug where "Save" didn't work at all though "Save as" worked fine<br>
+- Fixed a crash bug that occurred when scrolling down to last byte when in "Thingy view"<br>
+- Fixed a bug in Value Scan Relative that caused it to stop working after searching once and then changing the search string<br>
+- A number of aesthetic changes have been made<br>
+- The documentation has been updated<br>
+<P>
+<HR>
+<!-- 1.2       -->
+<b>What's New in 1.3?</b><br>
+<br>
+- Changed script output format<br>
+<ul>+ When separated-byte format is disabled, the output no longer
+has MTE &amp; multi-byte values enclosed yielding a much cleaner
+script (only numeric &amp; unknown values are enclosed)<br>
++ A second newline is output after an endstring token yielding a
+slightly cleaner script<br>
++ These features break backwards compatibility with previously
+dumped scripts so don't replace a script dumped with an older
+version with this version<br>
++ This also means that you need to manually enter two newlines
+after an endstring token when writing scripts now<br></ul>
+- Removed &quot;Normal Compression&quot; from the script
+optimization feature which now uses maximum compression all the
+time to achieve the best results (averages about a 40% reduction
+in # of bytes from a non-byte-separated script)<br>
+- Added progress bars in many places<br>
+<ul>+ Now you will KNOW it isn't frozen during dumps/replacements/optimizations
+&amp; relative searches<br></ul>
+<br>
+- Added a new feature called &quot;Value Scan Relative&quot;
+which is actually a modified version of the original (1.0)
+relative search engine which can be used to search using non-western
+alphabets (which the new engine cannot do)<br>
+<ul>+ The new feature allows you to search the whole file using a
+sequence of decimal, hex, or character values<br>
++ It allows you to have byte-wildcards<br>
++ You can save the same data about the results to a file<br>
++ Use &quot;Search Relative&quot; &amp; &quot;Scan Relative&quot;
+for finding western-alphabet (arabic) strings containing a
+mixture of [A-Z] [a-z] [1-9] because it searches using the
+relationships in the arabic alphabet<br>
++ Use &quot;Value Scan Relative&quot; to find relative results
+based on offsets (which is why you shouldn't mix case with this
+engine for the arabic alphabet at least) in any alphabet<br></ul>
+- Added the ability to select a certain number of bytes to &quot;Select
+Block&quot; in addition to the existing offset range selection<br>
+- Add/Remove/Clear bookmarks now all save changes to the loaded
+table<br>
+- Added ability to enable clean dumping (#), &amp; change the
+status of punctuation movement (&gt;) to the Table Toolbar<br>
+<ul>+ Changes are saved to the loaded table<br></ul>
+- Implemented another speed hack in the dumper which is a
+significant speed increase for large scripts<br>
+- Fixed a bug in the table-handling code which caused certain
+tokens not to load<br>
+- Fixed a bug in the script-dump-bookmark feature that made only
+one of the bookmarks work at a time<br>
+- A number of aesthetic changes have been made<br>
+- The documentation has been updated<br>
+<P>
+<HR>
+<!-- 1.2       -->
+<b>What's New in 1.2?</b><br>
+<br>
+<b>Thingy table compatibility enhanced dramatically:</b><br>
+<br>
+- Linked values ( $xx=## ) have been implemented and tested up to
+value 99
+<ul>+ you can have as many as you want</ul>
+- Japanese punctuation movement has been implemented in the style
+of Thingy<br>
+<ul>+ now !xx, @xx, and &gt; are all supported within tables<br>
++ punctuation movement is supported in both the dumper &amp; the
+reinserter<br>
+<ul>~ if it was switched during a dump it will be switched back
+during a replace</ul>
++ much thanks to Necrosaro &amp; Naflign for walking me through
+this</ul>
+- Now # is supported as well for dumping truly clean scripts!<br>
+- Thingy-view is now nearly identical to the way Thingy views
+files<br>
+<br>
+<b>The table-handling code has been tweaked resulting in the
+following features:</b><br>
+- 2 &amp; 3-byte values are now supported unlike when I said they
+were but they really weren't<br>
+<ul>+ this includes the endstring &amp; newline tokens<br>
++ this has been tested this time<br>
++ it has NOT been tested on Dakuten/Handakuten values though they
+should work too<br></ul>
+
+- Translhextion shouldn't crash anymore if a file is opened as a
+table and is not a table<br>
+- Bookmarks added during program operation are now automatically
+saved to the loaded table file if a table file is loaded<br>
+- A new encoding option has been added to the &quot;Optimize
+Script&quot; function<br>
+<ul>+ choose between normal (old-style) or maximum compression (new!)<br>
+<ul>~ normal compression still just optimizes a script using DTE only<br>
+~ maximum compression will optimize a script using DTE, MTE,
+&amp; multi-byte values!!!!!!<br>
+<ul>- unfortunately, this can be slow at times<br></ul></ul>
+~ maximum compression can be used to make a &quot;clean-dumped&quot;
+script (#) reinsertable<br>
+<ul>- (except of course for any numeric values that got stripped)<br></ul></ul>
+- Fixed a large number of table-loading bugs which were the cause
+of frustration for many<br>
+<ul>+ if you're table has a carriage return at the end of each line
+you will still have problems<br></ul>
+- Fixed a bug in the dumper which probably never affected anyone
+but you never know
+<br>
+- Added another speed-hack in the dumper/reinserter which yields
+more speed Yay! (not very dramatic this time)<br>
+<br>
+<b>The following has also been changed:</b><br>
+- A new feature called &quot;Relative Scan&quot; has been
+implemented<br>
+<ul>+ the old style of saving relative search results to a file has
+been removed<br>
++ now relative search is just for finding and selecting values<br>
++ relative scan will relative search the whole document<br>
+<ul>~ you can view the offsets, &amp; relative offsets of the search
+immediately<BR>
+~ you can then choose to save the results to a file<br>
+~ you can also generate a skeletal Thingy table from the relative
+offsets of a found sequence</ul>
+<br></ul>
+- A new feature has been added which notifies you before saving
+if the file's size has changed<br>
+<ul>+ it tells you by how many bytes the file has changed +/-</ul><br>
+- A number of small bugs have been fixed here and there
+especially in the relative search algorithm<br>
+- A number of aesthetic changes have been made<br>
+- The documentation has been updated<br>
+<br>
+
+<!-- 1.1  -->
+<HR>
+
+<b>What's New in 1.1</b><br>
+<br>
+<b>The table-handling code has been re-engineered resulting in the
+following features:</b><br>
+- Script dumping/replacing/optimizing is MUCH MUCH FASTER!!!! We're
+talking multiple orders of magnitude here<br>
+- Option to view file as literal ascii OR as equivalent table
+values (in the style of Thingy &amp; Thingy32) thanks to table
+speed increase<br>
+- Table values can be up to 3-bytes (though only 2-byte values
+have been thoroughly tested) except for newline and endstring
+values which can be up to 2-bytes<br>
+<br>
+- &quot;Table Active&quot; has been moved to a floating tool bar
+along with the Thingy-style view option<br>
+<br>
+<b>The search relative code has been rewritten to be much more
+versatile:</b><br>
+- It is no longer limited to search strings of a single case<br>
+- It is no longer limited to ONLY alphabetic OR numeric search
+strings<br>
+- Any of the following characters may be used in any combination
+in a search string [A - Z], <br>
+[a - z], and [1 - 9]. Any other character is treated as a byte-wildcard!<br>
+<br>
+- An option has been added to search the remainder of the open
+file and save the results to a separate file with all sorts of
+useful information a la SearchR<br>
+- Unfortunately this makes the relative searching process slower
+: (<br>
+<br>
+<b>The following has also been changed:</b><br>
+- An Intelligent Right-Click menu has been added which allows the
+following operations only when appropriate:
+<ul>+ Cut<br>
++ Copy<br>
++ Paste<br>
++ Paste preview<br>
++ Dump Script<br>
++ Replace Script<br>
++ Hexdump<br>
++ Jump to<br>
++ Select All<br></ul>
+- The documentation has been updated<br>
+- Other numerous small bugs have been fixed
+</body>
+</html>

@@ -1,0 +1,60 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Apply template... (command File/Current File/Apply template...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Apply template... (command File/Current File/Apply template...)</DIV><br>
+<br>
+Use this command to apply a binary template on the file. A binary
+template consists of a text file with the extension &quot;tpl&quot;
+that contains a number of variable type+name combinations, such
+as this:<br>
+<br>
+<tt>BYTE filetype<br>
+WORD version<br>
+DWORD filelength<br></tt>
+<br>
+This sample template file named &quot;sample.tpl&quot; is
+included in the Translhextion directory. When the command is
+chosen from the menu you will be prompted to choose the template
+file you want to apply. Translhextion will then load that file
+and use the code in it to give you a structured &quot;interpretation&quot;
+of the data in the currently loaded file, starting at the current
+byte. The result will be displayed in the edit-box of a dialogue,
+from where you can copy the result to the clipboard if necessary.
+The result looks like this:<br>
+<br>
+<tt>File: C:\Data\test.dat<br>
+Template file: C:\Translhextion\sample.tpl<br>
+Applied at offset: 15</tt><br>
+<br>
+<tt>BYTE filetype = 66 (signed) = 66 (unsigned) = 0x42 = 'B'<br>
+WORD version = 30285 (signed) = 30285 (unsigned) = 0x764d<br>
+DWORD filelength = 8 (signed) = 8 (unsigned) = 0x8</tt><br>
+<br>
+-&gt; Length of template = 7 bytes.<br>
+<br>
+Following variable types are recognized: (recognition is case-sensitive,
+so &quot;byte&quot; is not recognized as type &quot;BYTE&quot;)<br>
+- a byte-size value: &quot;BYTE&quot;, &quot;char&quot;.<br>
+- a word-size value: &quot;WORD&quot;, &quot;short&quot;.<br>
+- a longword-size value: &quot;DWORD&quot;, &quot;int&quot;,
+&quot;long&quot;, &quot;LONG&quot;.<br>
+- a float value: &quot;float&quot;.<br>
+- a double value: &quot;double&quot;.<br>
+The File/Open in text editor command:<br>
+This function attempts to call an external text editing program
+with the current file as argument. Default editor is the Windows
+Notepad. You can choose the editor in the Options/Preferences...
+dialogue.<br>
+<br>
+Template feature developed by <a href="../01/01-Acknowledgments.html">Raihan Kibria</A></p>
+</body>
+</html>

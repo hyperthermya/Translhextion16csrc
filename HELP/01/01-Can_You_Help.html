@@ -1,0 +1,60 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+<title>Can You Help?</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Can you help?</DIV><br>
+<br>
+If there are experts out there who can give me information about
+the following topics in a format that I can understand it would
+be much appreciated. I will use any information about these
+topics to add features to Translhextion. If you are such an
+expert, please contact me. <a href="01-Contacting_The_Author.html">(Contacting the Author)</A><br>
+<br>
+<DIV CLASS="italic">I would appreciate a brief lesson on pointer calculation from a
+binary perspective (geared towards SNES roms rather than another
+kind if it helps). I know what pointers are; I just don't
+understand what this feature of Thingy DOES exactly and how I can
+implement a similar feature.</DIV><br>
+<tt><br>
+Pointer calculations<br>
+in addition to script insertions, you can insert updated pointer
+tables as<br>
+well. first, make your insert bookmark and have that all set up.
+Next, you<br>
+need to add another line in your table file that looks like this:<br>
+<br>
+&amp;CE804h-200h<br>
+<br>
+Thingy includes support for two types of pointers: standard
+pointers and<br>
+relative pointers.<br>
+<br>
+For standard pointers:<br>
+The first address is the beginning location of your table file.
+The second<br>
+address is the size of the header (For NES games this is 10h, for
+SNES games this is 200h.)<br>
+<br>
+For relative pointers:<br>
+Same as standard pointers except make the header size 0.<br></tt>
+<DIV CLASS="italic">
+I'd like to implement more tile formats and dimensions in Infontile but I need more
+documentation on how they are stored.&nbsp; If you have documentation or
+knowledge about these formats and are willing to help in
+this area I would appreciate it.
+<p>
+I'd like some information about converting between standard hex
+addresses and various types of rom addresses<br>
+<br>
+If anyone has info about SNES rom expansion and header editing, I
+would gladly accept information about that as well.</DIV>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>MTE (Multiple Tile Encoding)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">MTE (Multiple Tile Encoding)</DIV><br>
+<br>
+Certain platforms, after encoding the alphabet, numbers, and
+punctuation as single tiles, use what is left of their 255
+possible character table entries as <a href="02-DTE.html">DTE (Dual Tile Encoding)</A> and
+<a href="02-MTE.html">MTE (Multiple Tile Encoding)</A> values.<br>
+<br>
+In the case of MTE this means that some of the remaining hex
+values are assigned common &quot;multiple-tiles&quot;. This can
+mean that one byte can represent an entire word or that two or
+more bytes together can represent an entire word (multi-byte
+values).<br>
+<br>
+Example:<br>
+<br>
+In Final Fantasy 2 (US) the following hex values are SOME of the
+multiple-tiles (in this case, multi-byte values) representing
+common names. <br>
+<br>
+<tt>
+HEX &nbsp;&nbsp;&nbsp;TILE<br>
+...&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+04 00 &nbsp;Cecil<br>
+04 01 &nbsp;Kain<br>
+04 02 &nbsp;Rydia<br>
+04 03 &nbsp;Tellah<br>
+... &nbsp;&nbsp;&nbsp;...<br></tt>
+<br>
+If MTE and multi-byte values are used extensively, it makes
+determining the encoding table very difficult because guesses
+would have to be made about how they are used.</p>
+</body>
+</html>

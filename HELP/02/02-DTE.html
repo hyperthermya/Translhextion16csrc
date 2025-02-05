@@ -1,0 +1,41 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>DTE (Dual Tile Encoding)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">DTE (Dual Tile Encoding)</DIV><br>
+<br>
+Certain platforms, after encoding the alphabet, numbers, and
+punctuation as single tiles, use what is left of their 255
+possible character table entries as <a href="02-DTE.html">DTE (Dual Tile Encoding)</A> and
+<a href="02-MTE.html">MTE (Multiple Tile Encoding)</A> values.<br>
+<br>
+In the case of DTE this means that some of the remaining hex
+values are assigned common &quot;dual-tiles&quot;. <br>
+<br>
+Example:<br>
+<br>
+In Final Fantasy 2 (US) the following hex values are SOME of the
+dual-tiles representing common character pairs. <br>
+<br>
+<tt>HEX TILE<br>
+... ...<br>
+8C&nbsp; th<br>
+8D&nbsp; he<br>
+8F &nbsp;ou<br>
+92 &nbsp;er<br>
+93 &nbsp;in<br>
+... ...<br></tt>
+<br>
+If DTE is used extensively, it makes determining the encoding
+table very difficult because guesses would have to be made about
+how DTE is used.</p>
+</body>
+</html>

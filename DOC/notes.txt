@@ -1,0 +1,11 @@
+Program redistribution notes:
+
+Please note that further distributions of the program must include the following:
+
+1) - The Font (Januschan Jome Regular.ttf)
+2) - The help file
+3) - The original license, found in DOC\LICENSE.TXT in the source code zip distribution.
+
+These terms have been set by Brian Bennewitz himself, and written here by Kitsune Sniper,
+since these were not mentioned in any form in the license. However it is asked that these
+simple requirements be met.

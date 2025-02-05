@@ -1,0 +1,45 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Text Encoding</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Text Encoding</DIV><br>
+<br>
+Every computer ever made has had some method of displaying and
+encoding text. A computer doesn't recognize the letter 'A' in its
+microprocessor; everything within the computer is dealt with
+using hexadecimal bytes like 00, F1, and AC. In order for the
+computer to be able to translate these hexadecimal numbers into
+letters and numbers that you and I read, a conversion table is
+used.&nbsp;There will usually be 255 possible entries within a
+table since bytes only go up to FF (255 in decimal numbers). But,
+usually only about 1/2 of them are used, since alphabets hardly
+take up 255 slots. For IBM compatible computers, the table
+standard has been known as 'ASCII'. <br>
+<br>
+Within the ASCII table, hexadecimal number $41 (hexadecimal
+numbers are usually denoted with a $ in front of them) represents
+the letter 'A'. From then on, $42 stands for 'B', $43 for 'C',
+etc... up to 'Z'. The lower case letters start at $61 ($61 for 'a').
+Also, the characters '0..9' are represented by $30 to $39. The
+other bytes consist of less common characters such as the 1/2
+symbol (½), the copyright symbol (©), and the asterisk (*).
+Also, some of them are used for control codes like $07, which is
+reserved for the system beep you hear when you turn on your
+computer. <br>
+<br>
+Not all computers use the ASCII standard. The Macintosh does not
+use the ASCII standard, and neither do gaming consoles. <br>
+<br>
+Certain platforms, after encoding the alphabet, numbers, and
+punctuation use what is left of the 255 possible table entries as
+<a href="02-DTE.html">DTE (Dual Tile Encoding)</A> and <a href="02-MTE.html">MTE (Multiple Tile Encoding)</A> values.</p>
+</body>
+</html>

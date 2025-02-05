@@ -1,0 +1,36 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Binary mode (command Options/Binary mode)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">Binary mode (command Options/Binary mode)</div><br>
+<br>
+What kind of byte order to use: Either Little-endian, as used in
+Intel-computers or Big-endian, used for example in computers with
+a Motorola processor.<br>
+The difference between these modes is thus: Consider a longword,
+which is 4 bytes (named A to D) long.<br>
+<br>
+<i>Longword in processor register</i> = ABCD.<br>
+The least significant bit, which has the value 1, is found in
+byte &quot;D&quot;. In a processor register the longword is
+ordered in this way. If this value is written to a position in
+memory, then by Intel convention the longword is written in this
+way, with the growing offsets to the right:<br>
+<br>
+<i>Longword in memory</i> = DCBA.<br>
+That is, the bytes making up the longword are written in reverse
+order as they are found in a processor register.<br>
+<br>
+This means that a file written by a Big-endian machine will
+contain wrong longword and word values if read by a Little-endian
+machine without conversion.</p>
+</body>
+</html>

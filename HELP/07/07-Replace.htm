@@ -1,0 +1,45 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Replace (command Search/Replace)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">Replace (command Search/Replace)</div><br>
+<br>
+Translhextion can find text and binary values in a file and
+replace them with other text and binary values you specify. In
+the Replace dialog you can choose if the case of the text parts
+of the find string are to be ignored and the find/replace
+direction. To encode binary values, Translhextion uses a special
+byte-code syntax developed by <a href="../01/01-Acknowledgments.html">Raihan Kibria</A>.<br>
+<br>
+In addition to replacing individual values, you can replace all
+occurrences prior to or following the current selection by
+choosing the appropriate button under &quot;Replace all...&quot;<br>
+<br>
+Example:<br>
+Here is the find string.&lt;bd:0&gt;FloatValue&lt;fl:-14.56&gt;<br>
+This will cause Translhextion to search for a string &quot;Here
+is the find string.&quot; followed by a zero-byte, then the text
+&quot;FloatValue&quot; and a 4-byte float with the value -14.56.<br>
+<br>
+Note that coded binary values will also be transformed by the
+&quot;match case&quot; option of the Find command, so if you
+search for a byte with the hex value of 0x41 (this is the upper-case
+letter &quot;A&quot;) with the match-case option disabled, then
+Translhextion will also find bytes with the hex value 0x61 (the
+lower-case letter &quot;a&quot;). Therefore you should always
+search for discrete binary values with case-matching enabled or
+you might not get correct results.<br>
+<br>
+This example applies to the replace string as well.<br>
+<br>
+Please see <a href="../02/02-Special_Byte-code_Syntax.htm">Using the special syntax</A> for further information.</p>
+</body>
+</html>

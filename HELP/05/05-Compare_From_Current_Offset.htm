@@ -1,0 +1,39 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Compare from current offset... (command Offset/Compare from current offset...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Compare from current offset... (command Offset/Compare from
+current offset...)</DIV><br>
+<br>
+If you need to compare two files then load one into Translhextion
+and choose this command. You will first be prompted to choose the
+file to compare with. Choose a file and then the OK button.
+Comparison will occur from the current caret offset.<br>
+If the chosen file matches the data in the loaded file from the
+current offset, you will be prompted so. Otherwise you will get a
+list of areas of difference to choose from. Areas of difference
+are ranges of bytes which are different in the files. For example:<br>
+<br>
+<tt>File 1: 00 01 02 03 04 (loaded file)<br>
+File 2: 00 ff ff 03 04<P></tt>
+In this case you will get one area of difference 2 bytes in size
+from offset 1 to 2. These offsets are measured relative to the
+current caret position. When you choose an area of difference
+then it will be selected and displayed in the main window.<P>
+The <a href="05-Get_FPValue.htm">Offset/Get floating point value</A> command:<br>
+This will show you the floating point values starting at the
+current caret position.<P>
+The <a href="../03/03-Properties.htm">File/Current File/Properties...</A> command:<br>
+
+Choose this to get the filename, path and size of the current
+file, and also the total number of lines of the hexdump.</p>
+</body>
+</html>

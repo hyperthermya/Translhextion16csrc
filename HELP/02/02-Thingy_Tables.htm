@@ -1,0 +1,158 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Thingy Tables</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Thingy Tables</DIV><br>
+<br>
+Most of the following is an excerpt from the Thingy98 readme.
+Comments are made regarding what is supported by Translhextion
+and what is not. Such comments are written following a '//'<br>
+<br>
+
+<b>ABOUT THE .TBL FILES</b><br>
+~~~~~~~~~~~~~~~~~~~~<br>
+The TBL files are alot alike the Xlate and Hexpose table files,
+but not<br>
+the same. Hey, thingy tables are standard now. If you don't like
+it, tough.<br>
+You can make as many lines as you want, in this format:<br>
+<br>
+<tt>80=0<br>
+9A= this<BR>
+5F=ed<br>
+30= t<br>
+0400=Cecil<br></tt>
+<br>
+Ah, important part...there are some &quot;special&quot; values
+that are common in some<br>
+games, and some special modifiers to make your script dumps
+special-like.<br>
+<br>
+<br>
+<tt>*xx</tt> = Newline Value (you can have up to 2 i think) <br>
+//only one at a time is supported, the hex can be up to three
+bytes long if needed<br>
+<br>
+<tt>/xx</tt> = End String Value (you can have up to 2 i think)<br>
+//only one at a time is supported, the hex can be up to three
+bytes long if needed<br>
+<br>
+<tt>$xx=x</tt> = &quot;Linked&quot; values(?)<br>
+<ol>Specifying $02=x then automatically displays the &lt;$xx&gt;
+value of
+x characters after it. So putting in $02=1 would display:
+&lt;$02&gt;&lt;$xx&gt; where xx is the hex value of the next 1
+char.</ol>
+<BR>//an unlimited number of these is supported but the value must be
+&lt;= 99<br>
+<br>
+<tt>!xx</tt> = Dakuten Value<br>
+//only one at a time is supported, the hex can be up to three
+bytes long if needed<br>
+<br>
+<tt>@xx</tt> = Handakuten Value<br>
+//only one at a time is supported, the hex can be up to three
+bytes long if needed<br>
+<br>
+<tt>&gt;</tt> = <ol>Tells script dumper to look for Dakuten/Handakuten value
+AFTER<br>
+the char it modifies, not before.<br>
+i.e. to search for [wa&quot;taleølelk] normally would produce:<br>
+[wa(t&quot;)ale(lø)elk].<br>
+If you use the &gt; option in your TBL file, it would produce:<br>
+[w(a&quot;)tal(eø)lelk].</ol><br>
+//supported<br>
+<br>
+<tt>#</tt> = <ol>Doesn't print ANY &lt;$xx&gt; commands. Make your scripts
+look clean!<br>
+Taking out the &lt;END&gt;s are easy, just replace them with
+blank in DOS Edit.<br></ol>
+//supported, though it is unwise to try and replace a script
+dumped in this mode<br>
+<br>
+^xx = Highlight Byte
+<p>//this is a Translhextion extension of Thingy Table functionality<br>
+//the specified byte will be displayed in the highlight color<br>
+//an unlimited number of these is supported though only single bytes are allowed<br>
+<br>
+<b>BOOKMARKS</b><br>
+Bookmarks are helpful when you want to save a ROM address so you
+can go back to it later.<br>
+You can make bookmarks by directly editing the table file.<br>
+The bookmark will look like this:<br>
+<br>
+<tt>(80600h)Text Block 1</tt><br>
+<br>
+The number is the address, text is the description.<br>
+<br>
+//table bookmarks are loaded to the bookmarks menu automatically
+when a table is loaded<br>
+//any bookmarks added during program operation are saved to the
+table file<br>
+//any bookmarks removed during program operation are removed from
+the table file<br>
+<br>
+<b>SCRIPT DUMPING</b><br>
+If you are thinking of dumping something more than once, i would
+suggest<br>
+making a script dump bookmark.<br>
+A script dump bookmark will look like this:<br>
+<br>
+<tt>[80600h-8D600h]Dialogue Block 1</tt><br>
+<br>
+the first number is the beginning, the second number is the end,
+and the text<br>
+is the name.<br>
+<br>
+//script dump bookmarks are loaded to the script menu
+automatically when a table is loaded<br>
+<br>
+SCRIPT INSERTION<br>
+Add a &quot;insert bookmark&quot; line to your .tbl file. Example:</p>
+<P>
+<tt>{80600h-FF4dump.txt}Dialogue Block 1<br>
+^^^^^^ The address to insert the script to.<br>
+^^^^^^^^^^^ The filename to get the script from.<br>
+^^^^^^^^^^^^^^^^ Description of the &quot;insert bookmark&quot;.</tt><br>
+<br>
+//insert bookmarks are NOT supported because you can make a
+regular bookmark and insert<br>
+//from there<br>
+<br>
+<b>Pointer calculations</b><br>
+<br>
+in addition to script insertions, you can insert updated pointer
+tables as<br>
+well. first, make your insert bookmark and have that all set up.
+Next, you<br>
+need to add another line in your table file that looks like this:<br>
+<br>
+<tt>&amp;CE804h-200h</tt><br>
+<br>
+Thingy includes support for two types of pointers: standard
+pointers and<br>
+relative pointers.<br>
+<br>
+For standard pointers:<br>
+The first address is the beginning location of your table file.
+The second<br>
+address is the size of the header (For NES games this is 10h, for
+SNES games<br>
+this is 200h.)<br>
+<br>
+For relative pointers:<br>
+Same as standard pointers except make the header size 0.<br>
+<br>
+//no part of this is supported because I don't understand it but
+I'd love to implement it.<br>
+//If you know about this, refer to <a href="../01/01-Can_You_Help.html">Can you help?</A></p>
+</body>
+</html>

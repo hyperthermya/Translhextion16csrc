@@ -1,0 +1,100 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Search Relative... (command Search/Search Relative...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">Search Relative... (command Search/Search Relative...)</div><br>
+<br>
+In short, search for a find string relatively in a file. The
+dialog allows you to choose whether you want to search for the
+next instance in a specific direction. You may search for strings
+containing the characters (A - Z), (a - z), and (1 - 9). Any
+other character in the find string is treated as a byte-wildcard.
+Please not this is only useful for finding strings using the
+western alphabet (arabic alphabet).<br>
+<br>
+If I want to search for string but I don't have a table for the
+file's text encoding then I have to search for it relatively.
+This works only if the string does not make use of DTE. Please
+note that the reason <a href="../02/02-DTE.html">DTE (Dual Tile Encoding)</A> is considered to be
+a pain among table makers is because you cannot easily search for
+strings relatively if they use DTE. <a href="../02/02-MTE.html">MTE (Multiple Tile Encoding)</A>
+is hated even more. In addition, it must be noted that just
+because a string was found in the file matching your search
+string it does not necessarily mean that it IS in fact equal to
+the search string. It just means that the found string's
+characters are RELATED to each other in exactly the same way as
+the search string's characters are RELATED to each other. <br>
+<br>
+This works best when there are at least 2 of each type of
+character (I.E. if there is one lower case letter in the string,
+adding a few more would work better. The same goes for upper case
+&amp; for numbers)<br>
+<br>
+Example<br>
+<TABLE>
+<TR>
+ <TD class="top">SEARCH FOR</TD>
+ <TD class="top">POSSIBLE RESULTS</TD>
+</TR>
+<TR>
+ <TD>&quot;Chocobo&quot;</TD>
+ <TD>&quot;Chocobo&quot;, &quot;Zhocobo&quot;,
+&quot;4hocobo&quot;, &quot;Qipdpcp&quot;, etc.</TD>
+</TR>
+<TR>
+ <TD>&quot;Cho*o*o&quot;</TD>
+ <TD>&quot;Chocobo&quot;, &quot;Cho o o&quot;,
+&quot;ChoZoZo&quot;, &quot;QipQpQp&quot;, etc.</TD>
+</TR>
+<TR>
+ <TD>&quot;I am here&quot;</TD>
+ <TD>&quot;I am here&quot;, &quot;ILamLhere&quot;,
+&quot;Zeamqhere&quot;, &quot;QQbnQifsf&quot;, etc.</TD>
+</TR>
+<TR>
+ <TD>&quot;uR8tE5&quot;</TD>
+ <TD>&quot;uR8tE5&quot;, &quot;vS9uF6&quot;, etc.</TD>
+</TR>
+</TABLE>
+<br>
+
+<br>
+You may wonder why you would get a result like &quot;Qipdpcp&quot;
+when searching for &quot;Chocobo&quot;. The answer to this is
+that the letters in &quot;Qipdpcp&quot; are related in the same
+way as the letters in &quot;Chocobo&quot;. This illustrates why
+relative search is not an exact science. The likelihood of
+someone choosing to encode (or encoding by accident) &quot;Qipdpcp&quot;
+AND &quot;Chocobo&quot; in the same file is not great but it is
+something to be aware of. The shorter the search string and the
+more common the letter combinations the more likely it is that
+you're results will not be what you want.<br>
+<br>
+Technique Explanation:<br>
+<br>
+You may wish to read about <a href="../02/02-Text_Encoding.htm">&quot;Text Encoding&quot;</A> before you
+read this.<br>
+<br>
+What relative search does is it will take a word you give it that
+you know is going to<br>
+appear somewhere in your file, and searches for words of the same
+length whose characters are related in same way (by the same
+offsets) as the characters in the search string. It searches by
+assuming that if the letter A is for example entry $00, then B
+must be entry $01, and so on. It uses the offset between each
+character in a string as the comparison. For example, the
+difference in the offset between A and B is almost always 1. So,
+if we searched for &quot;ABBA&quot; then we would find all words
+whose characters have offsets matching (1,0,1) as &quot;ABBA&quot;
+does. This can turn up a number of inaccurate matches if a short
+string with common letters is used.</p>
+</body>
+</html>

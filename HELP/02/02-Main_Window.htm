@@ -1,0 +1,149 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Translhextion's Main Window</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Translhextion's Main Window</DIV><br>
+<br>
+The window's title shows the name of the currently loaded file in
+square brackets, with an asterisk on it's right side if the file
+has been changed. If a file is loaded, you will find something
+like this in the window's client area:<P>
+<tt>000000 23 42 34 53 56 45 76 45 #B4SVEvE<br>
+000008 64 56 0a bc 0a 35 c0 08 dV...5..<br>
+000010 06 be 09 07 bb 07 00 00 ........<br>
+000018 00 00 00 00 00 00 07 __ .......<P></tt>
+On the far left are the offsets of the first byte in the line in
+hexadecimal notation. You can choose the offset length with the
+<b>Options/Preferences</b> command. Then come the actual byte values,
+with vertical separating lines after every fourth byte in the
+line. You can choose the number of bytes to display per line with
+the <b>Options/Preferences</b>, and also, if it should be automatically
+adjusted to the window width. To the far right are the character
+representations of these values, with dotted lines on the left
+and right of this section. You can choose the character set for
+these representations as well as the font size with the <b>Options/Preferences</b>
+command. As you can see, the first byte of the second line of the
+sample hexdump has the hexadecimal value 64 and the corresponding
+character is a lower case &quot;d&quot;. The position after the
+last byte of the file is marked with a double underscore &quot;__&quot;
+in the byte section.<br>
+<br>
+Blinking in the window somewhere is a rectangular caret, if the
+window is enabled. If it is in the byte section, then it stands
+on either of the two nibbles (half-bytes). If it is in the
+character section, then it stands on one character corresponding
+with one byte. In either case the corresponding other
+representation is shown inverted in the other section.<br>
+On the bottom of the window is the status bar, which displays
+additional information. In the first section of the status bar
+you can find the current offset of the byte which the caret is
+marking in hexadecimal and decimal notation. After that come the
+bits of the current byte. Also in this section, on the right side,
+is something like this:<br>
+<br>
+<b>Unsigned: B:35,W:16931,L:1395933731</b><br>
+These are the values of the byte (B:), the word (W:) and the
+longword (L:) value starting at this offset in decimal notation.
+These are computed depending on the setting for signed or
+unsigned values (Choose with command <b>Options/Preferences</b>) and on
+the binary mode setting, either Little-endian (Intel format) or
+Big-endian (Motorola format). Choose with command <b>Options/Binary
+mode</b>.<br>
+In the second section of the status bar are indicators for:<br>
+<br>
+- character set: &quot;ANSI&quot; or &quot;OEM&quot;.<br>
+- entering mode: &quot;OVR&quot; for overwriting or &quot;INS&quot;
+for inserting on keyboard input. If Translhextion is in read-only
+mode, then there will be a &quot;READ&quot; here.<br>
+- binary mode: &quot;L&quot; for Little-endian or &quot;B&quot;
+for Big-endian.<br>
+In the third section the file size in bytes is displayed.<br>
+The window also has a vertical and a horizontal scrollbar, which
+can be used to scroll the view. They don't change the caret
+position.<br>
+<br>
+<b>Moving the caret in the file</b><br>
+<br>
+You can move the caret with the arrow keys. Press TAB to toggle
+the editing mode between byte and character editing.You can also
+jump to any position by choosing the <a href="../11/11-Jump_to.htm">Offset/Jump to...</A> command
+and entering an offset, like &quot;125&quot;, which will set the
+caret position to offset 125 decimal. For relative jumps in the
+file, for example if you want to go to an offset 150 bytes after
+the current one, you have to start with &quot;+&quot; as the
+first character and follow this with either a decimal number or a
+hex number starting with &quot;x&quot;. So to jump 150 bytes
+forward you have to enter &quot;+150&quot; or &quot;+x96&quot; in
+hex notation. For backward relative jumps start with &quot;-&quot;
+(minus) as the first character. To jump directly to the end of
+the file press Ctrl+End, for the beginning Ctrl+Home.<br>
+<br>
+Translhextion can find text and binary values in a file. Choose
+<a href="../07/07-Find.htm">Search/Find</A> to do this. In the dialog you can choose if the case
+of the text parts of the find string are to be ignored and the
+find direction. To encode binary values, Translhextion uses a
+special byte-code syntax developed by <a href="../01/01-Acknowledgments.html">Raihan Kibria</A>.<br>
+<br>
+Example:<br>
+<b>Here is the find string.&lt;bd:0&gt;FloatValue&lt;fl:-14.56&gt;</b><br>
+This will cause Translhextion to search for a string &quot;Here
+is the find string.&quot; followed by a zero-byte, then the text
+&quot;FloatValue&quot; and a 4-byte float with the value -14.56.<br>
+<br>
+Note that coded binary values will also be transformed by the
+&quot;match case&quot; option of the Find command, so if you
+search for a byte with the hex value of 0x41 (this is the upper-case
+letter &quot;A&quot;) with the match-case option disabled, then
+Translhextion will also find bytes with the hex value 0x61 (the
+lower-case letter &quot;a&quot;). Therefore you should always
+search for discrete binary values with case-matching enabled or
+you might not get correct results.<br>
+Please see <a href="02-Special_Byte-code_Syntax.htm">Using the special syntax</A> for further information.<br>
+<br>
+The <a href="../07/07-Find_next.htm">Search/Find next</A> and <a href="../07/07-Find_prev.htm">Search/Find previous</A> commands find the
+next or previous occurrence of the find string last entered in
+the Find-dialog, with the match-case option enabled or disabled
+as chosen in it.<br>
+By positioning the mouse cursor on a byte or a character and
+pressing the left mouse button you can also set the caret
+position.<br>
+You can also move in the file by choosing one of the bookmarks in
+the &quot;Bookmarks&quot; menu section. The caret will be set to
+that offset immediately.<br>
+<br>
+<b>Editing the file</b><br>
+<br>
+There are several ways to edit the data in the file. But you will
+only be able be to change the file in any way if the <b>Read-only
+mode</b> is disabled. To enable or disable the read-only mode choose
+the <a href="../03/03-Read_Only.htm">File/Read-only on/off</A> command. If the read-only mode is
+enabled, there will be &quot;READ&quot; written in the status bar
+and the menu item will be checked.<br>
+<br>
+<b>Using the keyboard</b><br>
+For overwriting data the overwriting entering mode must be
+enabled, that means, the status bar must show &quot;OVR&quot;
+somewhere. Toggle the entering mode with the Insert-key on the
+keyboard or choosing <a href="../06/06-Toggle_key_ins_overwrite.htm">Insert/Toggle keyboard insert/overwrite mode</A>
+. You can overwrite the data in the bytes section by moving the
+cursor to the appropriate position and pressing any of the
+hexadecimal digits 0-9 and a-f on the keyboard. The nibble the
+caret is marking currently will be set to that value and the
+caret will then go on to the next nibble. If the caret is in the
+bytes section, pressing any alphanumeric key will set the current
+byte (that which the caret is marking) to that value, and the
+caret will go on to the next byte.<br>
+<br>
+For inserting data the status bar must show &quot;INS&quot;
+somewhere. Entering data now will insert a byte at the current
+position.</p>
+</body>
+</html>

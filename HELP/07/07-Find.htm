@@ -1,0 +1,42 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<title>Find (command Search/Find)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Find (command Search/Find)</DIV><br>
+<br>
+Translhextion can find text and binary values in a file. In the
+Find dialog you can choose if the case of the text parts of the
+find string are to be ignored and the find direction. You can choose to search
+for a literal hex string such as the following:<br>
+&quot;07AB1CF5&quot;&nbsp;
+<p>You can do this by choosing to search for hex instead of text.&nbsp; To encode
+binary values in the same string as text values, Translhextion uses a special byte-code syntax
+developed by <a href="../01/01-Acknowledgments.html">Raihan Kibria</A>.<br>
+<br>
+Example:</p>
+<P>
+<tt>Here is the find string.&lt;bd:0&gt;FloatValue&lt;fl:-14.56&gt;</tt><P>
+This will cause Translhextion to search for a string &quot;Here
+is the find string.&quot; followed by a zero-byte, then the text
+&quot;FloatValue&quot; and a 4-byte float with the value -14.56.<br>
+<br>
+Note that coded binary values will also be transformed by the
+&quot;match case&quot; option of the Find command, so if you
+search for a byte with the hex value of 0x41 (this is the upper-case
+letter &quot;A&quot;) with the match-case option disabled, then
+Translhextion will also find bytes with the hex value 0x61 (the
+lower-case letter &quot;a&quot;). Therefore you should always
+search for discrete binary values with case-matching enabled or
+you might not get correct results.<P>
+
+Please see <a href="../02/02-Special_Byte-code_Syntax.htm">Using the special syntax</A> for further information.</p>
+</body>
+</html>

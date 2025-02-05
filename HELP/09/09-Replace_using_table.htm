@@ -1,0 +1,316 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Replace using table... (command Script/Replace using table...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">Replace using table... (command Script/Replace using table...)</div><br>
+<br>
+Translhextion can use standard <a href="../02/02-Thingy_Tables.htm">Thingy Tables</A> to find and replace
+encoded text in a file. In the dialog you can choose whether you
+want to &quot;Optimize&quot; the bytes of the find and replace
+strings (see below) and you can select the search and replace
+directions.<br>
+<br>
+<b>NOTE:</b> Because of the nature of <a href="../02/02-Thingy_Tables.htm">Thingy Tables</A>, all searches using
+tables are <b>CASE SENSITIVE</b>.<br>
+<br>
+In addition to replacing individual values, you can replace all
+occurrences prior to or following the current selection by
+choosing the appropriate button under &quot;Replace all...&quot;<br>
+<br>
+What is the difference between enabling and disabling <b>&quot;Optimize
+bytes&quot;</b>?<br>
+<br>
+The answer to this question requires a good understanding of
+<a href="../02/02-Thingy_Tables.htm">Thingy tables</A> and <a href="../02/02-DTE.html">DTE (Dual Tile Encoding)</A>. You may also want to
+read about <a href="../02/02-MTE.html">MTE (Multiple Tile Encoding)</A>. The answer, in short, is
+as follows:<br>
+<br>
+<b>NOTE:</b> In the following explanation, where braces ' { ' and ' } '
+are used they represent the default value of the separated-byte
+<b>left enclosure</b> &amp; <b>right enclosure</b> characters which can be
+specified in Options/Preferences... You must use the characters
+specified in this setting while using any table-related command!<br>
+<br>
+<b>&quot;Optimize bytes&quot; disabled:</b><br>
+<br>
+The search and replace strings are parsed through the Thingy
+table with each byte translated literally. Each character literal
+is translated into its equivalent character literal in the table
+without considering DTE, MTE, or multi-byte values and each byte
+literal of the form {X} is translated into it's equivalent multi-character-byte
+literal using DTE and MTE. <br>
+<br>
+Example:<br>
+<br>
+If I want to search for or replace &quot;Crystal&quot; in Final
+Fantasy 2 (US), it happens to be encoded in two forms, the first
+with all character literals (7-bytes) and the second using DTE (4-bytes).
+As you can see, byte-literals must be used to find and replace
+the DTE version of &quot;Crystal&quot;.<br><BR>
+<table>
+
+<tr>
+       <td class="top">FIND STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td>
+</tr>
+<tr>
+       <td>Crystal</td>
+       <td>&quot;Crystal&quot;</td>
+       <td><b>7-bytes</b></td>
+</tr>
+<tr>
+       <td>C{ry}{st}{al}</td>
+       <td>&quot;Crystal&quot;</td>
+       <td>4-bytes</td>
+</tr>
+</table>
+<BR>
+<table>
+<tr>
+       <td class="top">REPLACE STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td>
+</tr>
+<tr>
+       <td>Crystal</td>
+       <td>&quot;Crystal&quot;</td>
+       <td><b>7-bytes</b></td>
+</tr>
+<tr>
+       <td>C{ry}{st}{al}</td>
+       <td>&quot;Crystal&quot;</td>
+       <td>4-bytes</td>
+</tr>
+</table>
+<br>
+<br>
+Lets say I want to search for or replace &quot;Crew&quot; instead.
+It cannot be found using this setting without typing in byte-literals
+because the only encoding of it uses DTE (3-bytes). Because of
+this, without using byte-literals, a 4-byte version would be
+replaced if &quot;Crew&quot; was entered as the replace string.<br>
+<table>
+<tr>
+       <td class="top">FIND STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td></tr>
+<tr>
+       <td>Crew</td>
+       <td>N/A</td>
+       <td>0-bytes</td>
+</tr>
+<tr>
+       <td>C{re}w</td>
+       <td>&quot;Crew&quot;</td>
+       <td>3-bytes</td>
+</tr>
+</table><BR>
+<table>
+<tr>
+       <td class="top">REPLACE STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td>
+</tr>
+<tr>
+       <td>Crew</td>
+       <td>&quot;Crew&quot;</td>
+       <td><b>4-bytes</b></td>
+</tr>
+<tr>
+       <td>C{re}w</td>
+       <td>&quot;Crew&quot;</td>
+       <td>3-bytes</td>
+</tr>
+</table>
+<br>
+<br>
+Finally, if I want to find an MTE value such as &quot;Cecil&quot;
+I MUST enter the byte-literal to find it. If a byte-literal is
+not used in the replace string then each character literal is
+translated and used instead.<br><BR>
+<table>
+<tr>
+       <td class="top">FIND STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td></tr>
+</tr>
+<tr>
+       <td>Cecil</td>
+       <td>N/A</td>
+       <td>0-bytes</td>
+</tr>
+<tr>
+       <td>{Cecil}</td>
+       <td>&quot;Cecil&quot;</td>
+       <td><b>2-bytes</b></td>
+</tr>
+</table>
+<BR><table>
+<tr>
+       <td class="top">REPLACE STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td>
+</tr>
+<tr>
+       <td>Cecil</td>
+       <td>"Cecil"</td>
+       <td><b>5-bytes</b></td>
+</tr>
+<tr>
+       <td>{Cecil}</td>
+       <td>&quot;Cecil&quot;</td>
+       <td><b>2-bytes</b></td>
+</tr>
+</table>
+<br>
+<b>&quot;Optimize bytes&quot; enabled:</b><br>
+<br>
+The search and replace strings are parsed through the Thingy
+table and DTE, MTE, &amp; multi-byte replacements are made where
+possible. DTE, MTE, &amp; multi-byte byte-literals CAN still be
+used if desired. <br>
+<br>
+Example:<br>
+<br>
+If I want to search for or replace &quot;Crystal&quot; in Final
+Fantasy 2 (US), it happens to be encoded in two forms, the first
+with all character literals (7-bytes) and the second using DTE (4-bytes).
+In this case, the DTE version is found or replaced with or
+without typing in byte-literals. <br>
+<table>
+<tr>
+       <td class="top">FIND STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td></tr>
+</tr>
+<tr>
+       <td>Crystal</td>
+       <td>&quot;Crystal&quot;</td>
+       <td><b>4-bytes</b></td>
+</tr>
+<tr>
+       <td>C{ry}{st}{al}</td>
+       <td>&quot;Crystal&quot;</td>
+       <td>4-bytes</td>
+</tr>
+</table><BR>
+<table>
+<tr>
+       <td class="top">REPLACE STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td>
+</tr>
+<TR>     
+	   <td>Crystal</td>
+       <td>&quot;Crystal&quot;</td>
+       <td><b>4-bytes</b></td>
+</tr>
+<tr>
+       <td>C{ry}{st}{al}</td>
+       <td>&quot;Crystal&quot;</td>
+       <td>4-bytes</td>
+</tr>
+</table>
+<br>
+<b>*NOTE:</b> This setting CANNOT be used to find or replace the <b>7-byte</b>
+version of &quot;Crystal&quot; at all which is why the other
+setting is available.<br>
+<br>
+Lets say I want to search for or replace &quot;Crew&quot; (DTE, 3-bytes)
+instead. It be found or replaced with or without typing in byte-literals
+using this setting.<br>
+<table>
+<tr>
+       <td class="top">FIND STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td></tr>
+</tr>
+<tr>
+       <td>Crew</td>
+       <td>&quot;Crew&quot;</td>
+       <td>3-bytes</td>
+</tr>
+<tr>
+       <td>C{re}w</td>
+       <td>&quot;Crew&quot;</td>
+       <td>3-bytes</td>
+</tr>
+</table><BR>
+<table>
+<tr>
+       <td class="top">REPLACE STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td>
+</tr>
+<tr>
+       <td>Crew</td>
+       <td>&quot;Crew&quot;</td>
+       <td><b>3-bytes</b></td>
+</tr>
+<tr>
+       <td>C{re}w</td>
+       <td>&quot;Crew&quot;</td>
+       <td>3-bytes</td>
+</tr>
+</table>
+<br>
+Finally, if I want to find an MTE value such as &quot;Cecil&quot;
+I can enter the byte-literal to find it or I can just search for
+the string itself. The same holds true for the replace string.<br>
+<table>
+<tr>
+       <td class="top">FIND STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td></tr>
+</tr>
+<tr>
+       <td>Cecil</td>
+       <td>&quot;Cecil&quot;</td>
+       <td>2-bytes</td>
+</tr>
+<tr>
+       <td>{Cecil}</td>
+       <td>&quot;Cecil&quot;</td>
+       <td><b>2-bytes</b></td>
+</tr>
+</table><BR>
+<table>
+<tr>
+       <td class="top">REPLACE STRING</td>
+       <td class="top">STRING FOUND</td>
+       <td class="top">BYTES</td>
+</tr>
+<tr>
+       <td>&quot;Cecil&quot;</td>
+       <td>&quot;Cecil&quot;</td>
+       <td><b>2-bytes</b></td>
+</tr>
+<tr>
+       <td>{Cecil}</td>
+       <td>&quot;Cecil&quot;</td>
+       <td><b>2-bytes</b></td>
+</tr>
+</table>
+<br>
+The reason <b>&quot;Optimize bytes&quot;</b> is recommended is because *MOST*
+game data is usually optimized using DTE, MTE, &amp; multi-byte
+values if they are present at all. This means that most of the
+time you are looking for a string that is fewer bytes than the
+number of characters you typed. This also means that most of the
+time you want to replace data in the fewest possible bytes (DTE,
+MTE, MBV) as well. The only time this setting isn't useful is
+when the string you are searching for COULD have used DTE, MTE,
+or a multi-byte value but didn't OR you specifically don't want
+to you apply DTE, MTE, or multi-byte values to your replace
+string even though you can.</p>
+</body>
+</html>

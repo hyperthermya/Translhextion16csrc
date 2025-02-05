@@ -1,0 +1,48 @@
+<STYLE>
+<!--
+BODY{
+font-family: Arial, Verdana, Helvetica, Helv;
+font-size:15px;
+color:#ffffff;
+background-image:url(relcode.gif);
+background-color:#000000;
+}
+div.italic{
+font-style:italic;
+font-weight:bold;
+font-size:15px;
+}
+div.title{
+text-decoration:underline;
+font-weight:bold;
+font-size:15px;
+}
+:link {color:#FF000f; text-decoration: underline;}
+:visited{color: #999900}
+div.norm{font-family: Arial, Verdana, Helvetica, Helv; font-size:15px; color:#ffffff;}
+
+table{
+width:70%;
+}
+
+td{
+width:33%;
+text-align:left;
+font-family:Courier,monospace;
+font-size:12px;
+color:#ffffff;
+}
+
+td.top{
+text-decoration:underline;
+width:33%;
+text-align:left;
+font-family:Courier,monospace;
+font-size:16px;
+}
+-->
+</STYLE>
+<!-- All of the changes can be applied here. I'm currently using the same    -->
+<!-- values as the ones I use in the NESten help file. I suggest that the background-->
+<!-- Image be placed in this same directory. Everything relating to the styles-->
+<!-- can be edited here.-->

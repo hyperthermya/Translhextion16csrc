@@ -1,0 +1,81 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Separated-byte Format</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Separated-byte Format</DIV><P>
+I developed this format as a way of dumping a script leaving a
+clear indication of how many bytes I had to work with during the
+translation process. Basically, scripts dumped in this format
+have single-byte <a href="02-DTE.html">DTE (Dual Tile Encoding)</A> and multiple-byte <a href="02-MTE.html">MTE (Multiple
+Tile Encoding)</A> values enclosed in ' { ' and ' } ' which I call
+byte-literals. <BR>
+<b>NOTE</b>: ONLY CHARACTER PAIRS THAT ALREADY EXIST AS
+DUAL-TILES IN THE EDITING FILE CAN BE INCLUDED IN THE TABLE AND
+PLACED BETWEEN BRACKETS AS A BYTE-LITERAL. YOU CANNOT MAKE UP YOU'RE
+OWN DTE VALUES WITHOUT DOING GRAPHICS AND/OR ASSEMBLY CODE EDITING. THE SAME HOLDS
+TRUE FOR MTE VALUES.<br>
+<br>
+The output looks like this:<br>
+<br>
+<tt>C{re}w:Cap{ta}{in} {Cecil},<br>
+{ w}{e }{ar}{e }ab{ou}t{ t}o{ a}rri{ve}!<br>
+{Cecil}:G{oo}d.{END}</tt><br>
+<br>
+<tt>C{re}w:{Wh}y{ a}r{e }w{e }{ro}bb{in}g<br><!-- There was a mistake here. C{re}w was C{}w-->
+{ c}{ry}{st}{al}{s }f{ro}m {in}{no}c{en}t<br>
+{ p}eop{le}?<br>
+C{re}w:T{ha}t'{s }{ou}{r }d{ut}y.<br>
+C{re}w:Do{ w}{e }{re}{al}l{y }{ha}v{e }{to}<br>
+k{ee}p{ d}o{in}g{ t}h{is}?{END}</tt><br>
+<br>
+<tt>C{re}w:Cap{ta}{in}!<br>
+C{re}w:W{e }c{an}'{t }{st}{an}{d }do{in}g<br> <!-- Another typo: this said 'C{re}w:W{e }c{an}'{}{st}{an}{d }do{in}g' -->
+{ t}h{is}{ a}nymo{re}!</tt><br>
+<br>
+Each byte is clearly identifiable. A character literal or newline
+literal that is one byte is displayed normally, a DTE value is
+displayed between brackets and represents one byte, an end block
+literal is displayed between brackets, and multi-byte values like
+&quot;Cecil&quot; in this case (which is 2-bytes) are also in
+brackets. If the number of replacemement bytes is crucial, and it
+often is, this format makes it easy to keep track of the number
+of bytes you have to work with. If the text you are editing is
+going to remain very similar to what it already is, this format
+is best. This format is also faster to replace. <br>
+<br>
+When this format is not enabled the same output looks like this:<br>
+<br>
+<tt>Crew:Captain Cecil,<br>
+we are about to arrive!<br> <!-- Edited: Used to say 'we a are about to arrive!' -->
+Cecil:Good.{END}</tt><br>
+<br>
+<tt>Crew:Why are we robbing<br>
+crystals from innocent<br>
+people?<br>
+Crew:That's our duty.<br>
+Crew:Do we really have to<br>
+keep doing this?{END}</tt><br>
+<br>
+<tt>Crew:Captain!<br>
+Crew:We can't stand doing<br>
+this anymore!</tt><br>
+<br>
+This format is easier to read but if it is replaced without using
+the optimization feature (Script/Optimize Script...) then each
+character literal will be one byte. Most often, that is not
+desirable. As you can see, an end block literal is still
+displayed between brackets. Any numerical values or unknown
+values will also be displayed in brackets. If you are writing a
+script which needs to occupy as few bytes as possible, it is best
+to dump to this format, then write the script, and finally use
+the optimization feature (<a href="../09/09-Optimize_Script.htm">Script/Optimize Script...</A>) to crunch the number of bytes down.</p>
+</body>
+</html>

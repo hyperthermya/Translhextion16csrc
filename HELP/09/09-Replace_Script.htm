@@ -1,0 +1,45 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Replace Script... (command Script/Replace Script...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">Replace Script... (command Script/Replace Script...)</div><br>
+<br>
+This command is used to replace a script in the form of bytes to
+the current file. In the dialog you can choose the start offset
+where the replacing begins (the byte at that offset is the first
+to be replaced). You can also choose the offset where the
+replacing should end or you can keep replacing until the end of
+the script is reached.<br>
+<br>
+If the command is chosen without a selection, then the values in
+the dialog will be set so that the byte at the current offset
+will be replaced.<br>
+<br>
+You have the option of dumping a script using &quot;Separated-byte
+Format&quot; (If you read nothing else in this help file, go read
+about this) or as vanilla text as desired. When replacing scripts,
+it is important to check appropriately whether this format was
+used or not on the script file to be replaced. If <a href="../02/02-Separated-byte_Format.html">Separated-byte
+Format</A> was used, the same left enclosure &amp; right enclosure
+characters that were used in the dumping of the script MUST be
+specified (this can be done in Options/Preferences...). <br>
+<br>
+You can also choose whether you want to pad remaining bytes in
+the range specified with '00' if the script file has been
+completely replaced before the end of the range has been reached.
+<br>
+<br>
+Before replacing a script, you may want to use <a href="09-Optimize_Script.htm">&quot;Script/Optimize
+Script...&quot;</A> to make the best use of your bytes. After this
+function has been used, the script has the same property as if
+you had dumped the script with <a href="../02/02-Separated-byte_Format.html">Separated-byte Format</A> enabled.</p>
+</body>
+</html>

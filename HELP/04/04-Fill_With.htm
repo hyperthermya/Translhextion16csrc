@@ -1,0 +1,53 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Fill selection with... (command Selection/Fill selection with...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Fill selection with... (command Selection/Fill selection with...)</DIV><br>
+<br>
+First select some of the bytes in a file then open the Fill
+selection with dialog from the edit menu or using Ctrl + Shift +
+F.<br>
+First decide if you want to enter the bytes in yourself - this is
+useful for small numbers of bytes and if so select Input from
+the combo box and enter the bytes below it.<br>
+<br>
+Otherwise you may want to fill the selection with a file by
+selecting File from the combo box and browsing to a file (It MUST
+exist - this is why only browsing is allowed).<br>
+<br>
+Note that if the selection is larger than the file or the hex
+string you entered the selection will be filled with multiple
+copies of your string/file and if it is smaller only a part of
+the string will be entered into the selection.<br>
+Note also that an odd number of hex digits will result in the
+first nibble of the last byte being the last hex digit entered.<br>
+<br>
+e.g. &quot;ffa&quot; &#151;&gt; &quot;ff af fa &#133;&quot;
+&#151;&gt; &quot;ÿ¯ú&#133;&quot;<br>
+(This doesn&#146;t apply to files as partial bytes cannot be
+present in files)<br>
+Then select the type of assignment operator you want to use - <br>
+<br>
+= - regular assign<br>
+|= - perform a bitwise or with the current byte and then assign<br>
+&amp;= - perform a bitwise and with the current byte and then
+assign<br>
+^= - perform a bitwise xor with the current byte and then assign<br>
+Below are the <br>
+<br>
+<!-- I have no idea how this should go. Please edit this part to your liking.-->
+File\Input Bit OpenFile Bit |= &amp;= ^=<br>
+0 0 0 0 0<br>
+0 1 1 0 1<br>
+1 0 1 0 1<br>
+1 1 1 1 0</p>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Value Scan Relative... (command Search/Value Scan Relative...)</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><div class="title">Value Scan Relative... (command Search/Value Scan Relative...)</div><br>
+<br>
+Search for sequences that match a list of relative offsets in a
+file. The dialog allows you to define a sequence of relative
+offsets by entering decimal, hex, or ascii values as well as byte-wildcards.
+The dialog also allows you to choose whether you want to search
+for the next instance in a specific direction. This feature is
+best put to use on non-western alphabets** or for searching for
+abstract data like pointers. You can save results to a file from
+this dialog. <br>
+<br>
+If I want to search for string but I don't have a table for the
+file's text encoding then I have to search for it relatively.
+This works only if the string does not make use of DTE. Please
+note that the reason <a href="../02/02-DTE.html">DTE (Dual Tile Encoding)</A> is considered to be
+a pain among table makers is because you cannot easily search for
+strings relatively if they use DTE. <a href="../02/02-MTE.html">MTE (Multiple Tile Encoding)</A>
+is hated even more. In addition, it must be noted that just
+because a string was found in the file matching your search
+string it does not necessarily mean that it IS in fact equal to
+the search string. It just means that the found string's
+characters are RELATED to each other in exactly the same way as
+the search string's characters are RELATED to each other. <br>
+<br>
+Technique Explanation:<br>
+<br>
+You may wish to read about <a href="../02/02-Text_Encoding.htm">&quot;Text Encoding&quot;</A> before you
+read this.<br>
+<br>
+What relative search does is it will take a word you give it that
+you know is going to<br>
+appear somewhere in your file, and searches for words of the same
+length whose characters are related in same way (by the same
+offsets) as the characters in the search string. It searches by
+assuming that if the letter A is for example entry $00, then B
+must be entry $01, and so on. It uses the offset between each
+character in a string as the comparison. For example, the
+difference in the offset between A and B is almost always 1. So,
+if we searched for &quot;ABBA&quot; then we would find all words
+whose characters have offsets matching (1,0,1) as &quot;ABBA&quot;
+does. This can turn up a number of inaccurate matches if a short
+string with common letters is used.<br>
+<br>
+**It can be used to search for strings using the western-alphabet
+but only strings completely composed of either all uppercase, all
+lowercase, or all numbers will produce good results.</p>
+</body>
+</html>

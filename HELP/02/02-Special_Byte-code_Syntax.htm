@@ -1,0 +1,72 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Special Byte-code Syntax</title>
+<link rel="STYLESHEET" href="../system/default_style.css" type="text/css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><DIV CLASS="title">Special Byte-code Syntax</DIV><br>
+<br>
+Byte-, word- and longword data can be encoded as follows:<br>
+<ul><br>
+&lt;{Size}{Numeral system}:{Value}&gt;<br>
+<b>Size:</b><br>
+b for byte-size (8 bit) value.<br>
+w for word-size (16 bit) value.<br>
+l for longword-size (32 bit) value.<br>
+<br>
+<b>Numeral System:</b><br>
+d for decimal system.<br>
+h for hexadecimal system.<br>
+<br>
+<b>For floating point values set Size and Numeral system to:</b><br>
+&quot;fl&quot; is for float values.<br>
+&quot;do&quot; is for double values.<br>
+<br>
+<b>Value:</b><br>
+Enter the value of the datum after the colon.<br>
+<br></ul>
+<b>Examples:</b><br>
+&lt;bd:-15&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;means byte-size datum with decimal value -15.<br>
+&lt;wh:23f0&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;means word-size datum with hexadecimal value 23f0.<br>
+&lt;ld:1234567890&gt; &nbsp;means longword-size datum with decimal
+value 1234567890.<br>
+&lt;fl:2.5&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;means float-size datum with value 2.5.<br>
+&lt;do:1.8e7&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;means double-size datum with value 1.8 * 10^7.<br>
+<!-- Sorry for all the &nbsp; signs, but it's the only way to imitate real spaces.--><br>
+<b>Note</b>: If you want to find or paste a valid special syntax string
+like &lt;bd:0&gt; as text, then prefix a \ to &lt;. This will
+turn &lt; into a normal character. Copying a &lt; in the file
+will insert the \ automatically.<br>
+<br>
+Backslashes (&quot;\&quot;) in the file are copied and encoded as
+double backslashes (&quot;\\&quot;).<br>
+<br>
+<b>Data ranges and sizes</b>:<br>
+<u>Integers</u>:<br>
+Byte:<br>
+<dd>signed from &#150;128 to 127</dd><br>
+<dd>unsigned from 0 to 255</dd><br>
+<br>
+Word (2 bytes):<br>
+<dd>signed from &#150;32,768 to 32,767</dd><br>
+<dd>unsigned from 0 to 65,535</dd><br>
+<br>
+Longword (4 bytes):<br>
+<dd>signed from &#150;2,147,483,648 to 2,147,483,647</dd><br>
+<dd>unsigned from 0 to 4,294,967,295</dd><br>
+<br>
+<u>Floating point types:</u><br>
+Float (4 bytes):<br>
+<dd>range 3.4E +/- 38 (7 digits)</dd><br>
+Double (8 bytes):<br>
+<dd>range 1.7E +/- 308 (15 digits)</dd><br>
+<br>
+Byte-code syntax developed by <a href="../01/01-Acknowledgments.html">Raihan Kibria</A>.</p>
+</body>
+</html>
