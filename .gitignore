@@ -1,0 +1,37 @@
+# Arquivos de compilação e binários
+*.exe
+*.dll
+*.so
+*.o
+*.obj
+*.a
+*.lib
+*.ilk
+*.pdb
+*.exp
+*.suo
+*.user
+
+# Pastas geradas automaticamente
+bin/
+obj/
+Debug/
+Release/
+build/
+.vs/
+out/
+
+# Arquivos de IDE/Editores
+.vscode/
+.idea/
+*.sln
+*.vcxproj*
+*.filters
+
+# Arquivos temporários
+*.log
+*.tmp
+*.swp
+
+# Dependências externas (SDL2 já é gerenciado pelo usuário)
+dependencies/
