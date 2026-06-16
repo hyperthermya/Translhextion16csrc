@@ -1,4 +1,4 @@
-# Translhextion 2.0 — Resurrected by Chafurdaria
+# Translhextion 2.0 — Resurrected by Hyperthermya
 
 A hex editor built for ROM hacking, originally written by Brian Bennewitz (1999–2001) and later packaged with HTML help by Kitsune Sniper. This fork picks up where the original source left off: compiled cleanly under a modern toolchain, with a handful of targeted fixes and performance improvements applied to the critical paths.
 
@@ -16,7 +16,7 @@ The original source compiled under Visual C++ 6.0 but needed some attention to r
 
 **Memory limit setting** — added a configurable file-load memory cap under Preferences (Options → Preferences, or Ctrl+I). The default is 512 MB. Set it to 0 to disable the check entirely. The setting persists to the registry alongside all other preferences. This is mainly useful if you're working on a machine with limited RAM and want the editor to refuse oversized files instead of hanging while it tries to allocate them.
 
-**Version bump** — `constants.h` was updated to version `2.0` with the `Resurrected by Chafurdaria` sub-release tag, which shows up in the About box.
+**Version bump** — `constants.h` was updated to version `2.0` with the `Resurrected by Hyperthermya` sub-release tag, which shows up in the About box.
 
 ## Building
 

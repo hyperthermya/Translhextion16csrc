@@ -3,7 +3,7 @@
 
 const string sName = "Translhextion";
 const string sVersion = "2.0";
-const string sSubRelease = "Resurrected by Chafurdaria";
+const string sSubRelease = "Resurrected by Hyperthermya";
 const string sHomepage = "I have no webspace :|";
 const string sEmail = "bennewit@uiuc.edu";
 const string FONT = "Januschan JOME Regular.ttf";
