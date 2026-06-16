@@ -42,7 +42,10 @@
 
 #include "resource.h"
 
-#include <fstream.h>
+#include <fstream>
+using std::fstream;
+using std::ifstream;
+using std::ofstream;
 #include "bstring.h"
 #include "bvect.h"
 #include "japanese.h"
@@ -163,8 +166,8 @@ public:
 	int iWindowWidth;
 	int iWindowHeight;
 	int	iCurrentLine;
-	long iCurrentByte;
-	long iCurrentNibble;
+	__int64 iCurrentByte;
+	__int64 iCurrentNibble;
 	Translhextion();
 	~Translhextion();
 	//MESSAGE PROCESSING
@@ -408,6 +411,18 @@ Translhextion mainwindow;
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, char* szCmdLine, int iCmdShow)
 {
 	hMainInstance = hInstance;
+
+	// Enable DPI awareness for correct rendering on Windows 7/10/11 high-DPI displays.
+	// Uses runtime lookup so the binary stays compatible with older systems.
+	{
+		HMODULE hUser32 = GetModuleHandle("user32.dll");
+		if (hUser32)
+		{
+			typedef BOOL (WINAPI* PFN_DPI)(void);
+			PFN_DPI pfn = (PFN_DPI)GetProcAddress(hUser32, "SetProcessDPIAware");
+			if (pfn) pfn();
+		}
+	}
 
 	HACCEL hAccel;
 

@@ -7,7 +7,10 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include <winresrc.h>
+#ifndef IDC_STATIC
+#define IDC_STATIC -1
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -424,7 +427,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,82,131,50,14
 END
 
-IDD_VIEWSETTINGSDIALOG DIALOG DISCARDABLE  0, 0, 241, 247
+IDD_VIEWSETTINGSDIALOG DIALOG DISCARDABLE  0, 0, 241, 265
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Preferences"
 FONT 8, "MS Sans Serif"
@@ -471,6 +474,9 @@ BEGIN
     LTEXT           "Path and filename of preferred Internet browser:",
                     IDC_STATIC,6,220,150,8
     EDITTEXT        IDC_EDIT4,6,231,214,13,ES_AUTOHSCROLL
+    LTEXT           "Memory limit for file loading (MB, 0 = unlimited):",IDC_STATIC,
+                    6,249,160,8
+    EDITTEXT        IDC_EDIT8,170,247,71,13,ES_AUTOHSCROLL | ES_NUMBER
     DEFPUSHBUTTON   "OK",IDOK,187,6,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,187,23,50,14
 END
@@ -873,17 +879,18 @@ BEGIN
     PUSHBUTTON      "Quit",IDCANCEL,147,209,54,14
 END
 
-IDD_ABOUTDIALOG DIALOG DISCARDABLE  0, 0, 235, 57
+IDD_ABOUTDIALOG DIALOG DISCARDABLE  0, 0, 235, 70
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Translhextion"
 FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDI_ICON1,IDC_STATIC,10,7,20,20
-    LTEXT           "Translhextion 1.6c",IDC_STATIC,40,7,119,8,SS_NOPREFIX
+    LTEXT           "Translhextion",IDC_EDIT2,40,7,119,8,SS_NOPREFIX
     LTEXT           "Copyright (C) Brian Bennewitz 2001",IDC_STATIC,40,18,
                     119,8
-    LTEXT           "Email @",IDC_EDIT1,40,28,183,8
-    PUSHBUTTON      "http://",IDC_BUTTON1,40,39,187,14,BS_LEFT
+    LTEXT           "",IDC_EDIT3,40,28,183,8
+    LTEXT           "Email @",IDC_EDIT1,40,38,183,8
+    PUSHBUTTON      "http://",IDC_BUTTON1,40,49,187,14,BS_LEFT
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
 END
 
@@ -930,8 +937,8 @@ BEGIN
                     WS_BORDER,10,184,205,8
 END
 
-IDD_2PROGRESSDIALOG DIALOGEX 0, 0, 186, 41
-STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_VISIBLE | 
+IDD_2PROGRESSDIALOG DIALOGEX 0, 0, 186, 60
+STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_VISIBLE |
     WS_CAPTION
 EXSTYLE WS_EX_TOOLWINDOW
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -942,6 +949,7 @@ BEGIN
                     5,30,175,6
     LTEXT           "",IDC_PROGRESS1TITLE,5,0,175,8
     LTEXT           "",IDC_PROGRESS2TITLE,5,20,175,8
+    PUSHBUTTON      "Cancel",IDC_CANCEL_DUMP,68,43,50,14
 END
 
 IDD_PROGRESSDIALOG DIALOGEX 0, 0, 186, 25
@@ -1439,7 +1447,7 @@ BEGIN
             VALUE "FileDescription", "Translhextion 1.6c\0"
             VALUE "FileVersion", "1, 6, 0, 1\0"
             VALUE "InternalName", "TRANSLHEXTION\0"
-            VALUE "LegalCopyright", "Copyright © Brian Bennewitz 2001\0"
+            VALUE "LegalCopyright", "Copyright ï¿½ Brian Bennewitz 2001\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "TRANSLHEXTION.EXE\0"
             VALUE "PrivateBuild", "\0"

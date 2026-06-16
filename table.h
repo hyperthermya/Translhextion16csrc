@@ -45,6 +45,11 @@ inline long dualbyteindex(string dualbyte)
 	return (int) char_hex(dualbyte.substr(0,2)) * 256 + (int) char_hex(dualbyte.substr(2,2));
 }
 
+// dualbyteindex from 4 raw characters ‚Äî zero string allocations
+inline long dualbyteindex_fast(char h0, char l0, char h1, char l1) {
+	return (long)char_hex_fast(h0,l0) * 256 + (long)char_hex_fast(h1,l1);
+}
+
 inline long toHIROM(long offset)
 {
 	return (offset - SNESHEADER) + 12582912;
@@ -109,7 +114,10 @@ inline void insert_longest_to_shortest(vector<tablevalue>& x,tablevalue& y)
 
 //takes buffer
 //translates hex in buffer to chars
-void translate(vector<string>& data)
+// pProc: optional char array marking already-processed positions (for parallel use)
+// iFrom/iTo: range to process; iTo=-1 means data.size()
+// doCompact: run the empty-string compaction at the end
+void translate(vector<string>& data, char* pProc = 0, int iFrom = 0, int iTo = -1, bool doCompact = true)
 {
 	int i = 0;
 	int j = 0;
@@ -117,25 +125,35 @@ void translate(vector<string>& data)
 	bool done = false;
 	bool puncswitched = false;
 	bool oldbjpuncswitch = bJPuncSwitch;
+	if(iTo < 0) iTo = (int)data.size();
 	if(tvHandakuten.hex.length() == 0 && tvDakuten.hex.length() == 0)
 	{
 		bJPuncSwitch = false;
-	}	
-	for(i = 0;i < data.size();i++)
+	}
+	for(i = iFrom;i < iTo;i++)
 	{
+		if(pProc && pProc[i]) continue;
+		if(bCancelDump) break;
 		done = false;
-		iProgressPos++;
-		if(progress1 != NULL && iProgressPos % iIncrementStep == 0)
-		{
-			StepProgress(progress1);
+		if(!pProc) {  // UI updates only on the main thread (pProc==NULL means sequential call)
+			iProgressPos++;
+			if(progress1 != NULL && iProgressPos % iIncrementStep == 0)
+			{
+				StepProgress(progress1);
+				MSG _msg;
+				while(PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE)) {
+					TranslateMessage(&_msg);
+					DispatchMessage(&_msg);
+				}
+			}
 		}
-		if(vLinked.size() > 0 && i + 1 < data.size())
+		if(vLinked.size() > 0 && i + 1 < iTo)
 		{
 			int k = 0;
 			int l = 0;
 			for(k = 0;k<vLinked.size();k++)
 			{
-				if(data[i] == vLinked[k].hex && i + vLinked[k].links < data.size())
+				if(data[i] == vLinked[k].hex && i + vLinked[k].links < iTo)
 				{
 					data[i] = sByteOpen + data[i] + sByteClose;
 					for(l = 0;l<vLinked[k].links;l++)
@@ -148,7 +166,7 @@ void translate(vector<string>& data)
 				}
 			}
 		}
-		if(!done && bJPuncSwitch && !puncswitched && i+(tvDakuten.hex.length()/2) < data.size())
+		if(!done && bJPuncSwitch && !puncswitched && i+(tvDakuten.hex.length()/2) < iTo)
 		{
 			int k = 0;
 			string temp;
@@ -180,7 +198,7 @@ void translate(vector<string>& data)
 				bSeemsJ = true;
 			}
 		}
-		if(!done && bJPuncSwitch && !puncswitched && i+(tvHandakuten.hex.length()/2) < data.size())
+		if(!done && bJPuncSwitch && !puncswitched && i+(tvHandakuten.hex.length()/2) < iTo)
 		{
 			int k = 0;
 			string temp;
@@ -212,14 +230,14 @@ void translate(vector<string>& data)
 				bSeemsJ = true;
 			}
 		}
-		for(j = 0;!done && (i+2< data.size()) && (j < vMultiByteTableOut.size());j++)
+		for(j = 0;!done && (i+2< iTo) && (j < vMultiByteTableOut.size());j++)
 		{
 			if(data[i] + data[i+1] + data[i+2] == vMultiByteTableOut[j].hex)
 			{	
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
-					data.remove(i+1);
+					data[i+1] = "";
+					data[i+2] = "";
 					if(bCleanScript || !bByteMark)
 					{
 						data[i] = vMultiByteTableOut[j].ascii;
@@ -228,7 +246,7 @@ void translate(vector<string>& data)
 					{
 						data[i] = sByteOpen + vMultiByteTableOut[j].ascii + sByteClose;
 					}
-					
+					i += 2;
 				}
 				else
 				{
@@ -252,36 +270,42 @@ void translate(vector<string>& data)
 		{
 			done = true;
 		}//problems next iLine
-		if(!done && (i+1< data.size()) && data[i] != "" && data[i+1] != "" && vDualByteTableOut[dualbyteindex(data[i] + data[i+1])] != "")
+		if(!done && (i+1<iTo) && data[i].length()==2 && data[i+1].length()==2)
 		{
-			if(bCleanScript || !bByteMark)
+			long dbIdx = dualbyteindex_fast(data[i][0],data[i][1],data[i+1][0],data[i+1][1]);
+			if(vDualByteTableOut[dbIdx] != "")
 			{
-				data[i] = vDualByteTableOut[dualbyteindex(data[i] + data[i+1])];
+				if(bCleanScript || !bByteMark)
+				{
+					data[i] = vDualByteTableOut[dbIdx];
+				}
+				else
+				{
+					data[i] = sByteOpen + vDualByteTableOut[dbIdx] + sByteClose;
+				}
+				if(bSplitMultiByte)
+				{
+					data[i+1] = "";
+					i += 1;
+				}
+				else
+				{
+					data[i+1] = "";
+					i = i + 1;
+				}
+				done = true;
 			}
-			else
-			{
-				data[i] = sByteOpen + vDualByteTableOut[dualbyteindex(data[i] + data[i+1])] + sByteClose;
-			}
-			if(bSplitMultiByte)
-			{
-				data.remove(i+1);
-			}
-			else
-			{
-				data[i+1] = "";
-				i = i + 1;
-			}
-			done = true;
 		}
 		if(!done)
 		{
-			if(sNewLine.length() > 4 && (i+2 < data.size()) && data[i] + data[i+1] + data[i+2] == sNewLine)
+			if(sNewLine.length() > 4 && (i+2 < iTo) && data[i] + data[i+1] + data[i+2] == sNewLine)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
-					data.remove(i+1);
+					data[i+1] = "";
+					data[i+2] = "";
 					data[i] = "\n";
+					i += 2;
 				}
 				else
 				{
@@ -292,12 +316,13 @@ void translate(vector<string>& data)
 				}
 				done = true;
 			}
-			else if(sNewLine.length() > 2 && (i+1 < data.size()) && data[i] + data[i+1] == sNewLine)
+			else if(sNewLine.length() > 2 && (i+1 < iTo) && data[i] + data[i+1] == sNewLine)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
+					data[i+1] = "";
 					data[i] = "\n";
+					i += 1;
 				}
 				else
 				{
@@ -312,13 +337,14 @@ void translate(vector<string>& data)
 				data[i] = "\n";
 				done = true;
 			}
-			if(!done && sNull.length() > 4 && (i+2 < data.size()) && data[i] + data[i+1] + data[i+2] == sNull)
+			if(!done && sNull.length() > 4 && (i+2 < iTo) && data[i] + data[i+1] + data[i+2] == sNull)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
-					data.remove(i+1);
+					data[i+1] = "";
+					data[i+2] = "";
 					data[i] = sByteOpen + "END" + sByteClose;
+					i += 2;
 				}
 				else
 				{
@@ -329,12 +355,13 @@ void translate(vector<string>& data)
 				}
 				done = true;
 			}
-			else if(!done && sNull.length() > 2 && (i+1 < data.size()) && data[i] + data[i+1] == sNull)
+			else if(!done && sNull.length() > 2 && (i+1 < iTo) && data[i] + data[i+1] == sNull)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
+					data[i+1] = "";
 					data[i] = sByteOpen + "END" + sByteClose;
+					i += 1;
 				}
 				else
 				{
@@ -349,13 +376,14 @@ void translate(vector<string>& data)
 				data[i] = sByteOpen + "END" + sByteClose;
 				done = true;
 			}
-			if(!done && tvDakuten.hex.length() > 4 && (i+2 < data.size()) && data[i] + data[i+1] + data[i+2] == tvDakuten.hex)
+			if(!done && tvDakuten.hex.length() > 4 && (i+2 < iTo) && data[i] + data[i+1] + data[i+2] == tvDakuten.hex)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
-					data.remove(i+1);
+					data[i+1] = "";
+					data[i+2] = "";
 					data[i] = tvDakuten.ascii;
+					i += 2;
 				}
 				else
 				{
@@ -368,12 +396,13 @@ void translate(vector<string>& data)
 				bSeemsJ = true;
 				done = true;
 			}
-			else if(!done && tvDakuten.hex.length() > 2 && (i+1 < data.size()) && data[i] + data[i+1] == tvDakuten.hex)
+			else if(!done && tvDakuten.hex.length() > 2 && (i+1 < iTo) && data[i] + data[i+1] == tvDakuten.hex)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
+					data[i+1] = "";
 					data[i] = tvDakuten.ascii;
+					i += 1;
 				}
 				else
 				{
@@ -392,13 +421,14 @@ void translate(vector<string>& data)
 				bSeemsJ = true;
 				done = true;
 			}
-			if(!done && tvHandakuten.hex.length() > 4 && (i+2 < data.size()) && data[i] + data[i+1] + data[i+2] == tvHandakuten.hex)
+			if(!done && tvHandakuten.hex.length() > 4 && (i+2 < iTo) && data[i] + data[i+1] + data[i+2] == tvHandakuten.hex)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
-					data.remove(i+1);
+					data[i+1] = "";
+					data[i+2] = "";
 					data[i] = tvHandakuten.ascii;
+					i += 2;
 				}
 				else
 				{
@@ -411,12 +441,13 @@ void translate(vector<string>& data)
 				bSeemsJ = true;
 				done = true;
 			}
-			else if(!done && tvHandakuten.hex.length() > 2 && (i+1 < data.size()) && data[i] + data[i+1] == tvHandakuten.hex)
+			else if(!done && tvHandakuten.hex.length() > 2 && (i+1 < iTo) && data[i] + data[i+1] == tvHandakuten.hex)
 			{
 				if(bSplitMultiByte)
 				{
-					data.remove(i+1);
+					data[i+1] = "";
 					data[i] = tvHandakuten.ascii;
+					i += 1;
 				}
 				else
 				{
@@ -435,10 +466,9 @@ void translate(vector<string>& data)
 				bSeemsJ = true;
 				done = true;
 			}
-			if(!done)
+			if(!done && data[i].length()==2)
 			{
-				string x = data[i];
-				index = (int) char_hex(data[i].substr(0,2));
+				index = (int) char_hex_fast(data[i][0], data[i][1]);
 				if(vTableOut[index].length() > 2)
 				{
 					if(bCleanScript || !bByteMark)
@@ -482,10 +512,21 @@ void translate(vector<string>& data)
 				}
 			}
 		}
+		if(pProc) pProc[i] = 1;
 	}
 	if(tvHandakuten.hex.length() == 0 && tvDakuten.hex.length() == 0)
 	{
 		bJPuncSwitch = oldbjpuncswitch;
+	}
+	if(doCompact && bSplitMultiByte) {
+		int w = 0;
+		for(int k = 0; k < (int)data.size(); k++) {
+			if(data[k].length() > 0) {
+				if(w != k) data[w] = data[k];
+				w++;
+			}
+		}
+		while((int)data.size() > w) data.pop_back();
 	}
 }
 
@@ -662,58 +703,83 @@ void detranslate(vector<string>& data)
 //puts chars into readable lines in buffer
 void enscript(vector<string>& data)
 {
-	string temp;
+	int n = (int)data.size();
+
+	// Pre-calculate total characters so we can do one allocation.
+	// bstring::operator+= reallocates+copies on every call, so building
+	// a line via temp+=token is O(L^2) per line.  Writing into a flat
+	// buffer with memcpy() reduces this to O(total_chars).
+	int totalChars = n * 2; // +2 per element covers worst-case \n padding
+	for(int k = 0; k < n; k++)
+		totalChars += (int)data[k].length();
+
+	char* outbuf   = new char[totalChars + 4];
+	int   outpos   = 0;
+	int   lineStart = 0;
+	char  byteOpenChar = sByteOpen.length() > 0 ? sByteOpen[0] : '{';
+
 	vector<string> result;
-	int i = 0;
-	for(i = 0;i<data.size();i++)
+	for(int i = 0; i < n; i++)
 	{
+		if(bCancelDump) break;
 		iProgressPos++;
 		if(progress2 != NULL && iProgressPos % iIncrementStep == 0)
 		{
 			StepProgress(progress2);
+			MSG _msg;
+			while(PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE)) {
+				TranslateMessage(&_msg);
+				DispatchMessage(&_msg);
+			}
 		}
-		if(data[i] == "\n")
+		const char* s    = data[i].c_str();
+		int         slen = (int)data[i].length();
+
+		if(slen == 1 && s[0] == '\n')
 		{
-			result.push_back(temp + data[i]);
-			temp = "";
+			outbuf[outpos++] = '\n';
+			outbuf[outpos]   = 0;
+			result.push_back(string(outbuf + lineStart));
+			lineStart = outpos;
 		}
-		else if(data[i].substr(1,3) == "END")
+		else if(slen >= 4 && s[1] == 'E' && s[2] == 'N' && s[3] == 'D')
 		{
 			if(bCleanScript)
 			{
-				result.push_back(temp + "\n");
-				result.push_back("\n");
+				outbuf[outpos++] = '\n';
+				outbuf[outpos]   = 0;
+				result.push_back(string(outbuf + lineStart));
+				result.push_back(string("\n"));
 			}
 			else
 			{
-				result.push_back(temp + data[i] + "\n");
-				result.push_back("\n");
+				memcpy(outbuf + outpos, s, slen); outpos += slen;
+				outbuf[outpos++] = '\n';
+				outbuf[outpos]   = 0;
+				result.push_back(string(outbuf + lineStart));
+				result.push_back(string("\n"));
 			}
-			temp = "";
+			lineStart = outpos;
 		}
 		else
 		{
-			if(bCleanScript)
+			if(bCleanScript && slen > 0 && s[0] == byteOpenChar)
 			{
-				if(data[i].substr(0,1) == sByteOpen)
-				{
-					;
-				}
-				else
-				{
-					temp += data[i];
-				}
+				; // skip byte markers in clean-script mode
 			}
 			else
 			{
-				temp += data[i];
+				memcpy(outbuf + outpos, s, slen);
+				outpos += slen;
 			}
 		}
 	}
-	if(temp != "")
+	if(outpos > lineStart)
 	{
-		result.push_back(temp);
+		outbuf[outpos] = 0;
+		result.push_back(string(outbuf + lineStart));
 	}
+	delete[] outbuf;
 	data = result;
 }
 
@@ -848,8 +914,8 @@ void read_table_file(fstream& fs, HWND hwnd, bookmark *pbmkList, int &iBookmarkC
 	bDumpClean = false;
 	bHighlight = false;
 	iRealTable = 0;
-	tvDakuten.ascii = "ÅJ";
-	tvHandakuten.ascii = "ÅK";
+	tvDakuten.ascii = "ÔøΩJ";
+	tvHandakuten.ascii = "ÔøΩK";
 	bReadingTable = true;
 	bReadingTable = false;
 	vector<string> empty(vChanges.size());
@@ -1195,16 +1261,16 @@ void read_table_file(fstream& fs, HWND hwnd, bookmark *pbmkList, int &iBookmarkC
 			vTableFileRight[i].substr(0,1) == (string) (char) 165 ||
 			vTableFileRight[i].substr(0,1) == (string) (char) 161))
 		{
-			tvDakuten.ascii = "°´";
-			tvHandakuten.ascii = "°¨";
+			tvDakuten.ascii = "ÔøΩÔøΩ";
+			tvHandakuten.ascii = "ÔøΩÔøΩ";
 			break;
 		}
 		if(vTableFileRight[i].length() > 0 && 
 			(vTableFileRight[i].substr(0,1) == (string) (char) 130 || 
 			vTableFileRight[i].substr(0,1) == (string) (char) 131))
 		{
-			tvDakuten.ascii = "ÅJ";
-			tvHandakuten.ascii = "ÅK";
+			tvDakuten.ascii = "ÔøΩJ";
+			tvHandakuten.ascii = "ÔøΩK";
 			break;
 		}
 	}
@@ -1316,9 +1382,23 @@ void read_script_file(fstream & fs, vector<string> & data)
 //writes a script into a file
 void write_script_file(fstream & fs, vector<string> & data)
 {
-	int i = 0;
-	for(i = 0;i<data.size();i++)
-		fs << data[i];
+	// Batch writes into 64KB chunks to reduce syscall overhead.
+	// Avoids thousands of individual operator<< calls for large dumps.
+	static char wbuf[65536];
+	int wpos = 0;
+	for(int i = 0; i < (int)data.size(); i++)
+	{
+		const char* p = data[i].c_str();
+		int len = (int)data[i].length();
+		if(wpos + len > (int)sizeof(wbuf))
+		{
+			if(wpos > 0) { fs.write(wbuf, wpos); wpos = 0; }
+			if(len >= (int)sizeof(wbuf)) { fs.write(p, len); continue; }
+		}
+		memcpy(wbuf + wpos, p, len);
+		wpos += len;
+	}
+	if(wpos > 0) fs.write(wbuf, wpos);
 }
 
 void pwrite_script_file(fstream & fs, vector<string> & data)
@@ -1364,7 +1444,7 @@ void pwrite_script_file(fstream & fs, vector<string> & data)
 				}
 			}
 			/*
-			else if(temp.length() >= 2+j && (temp.substr(j,2) == "°´" || temp.substr(j,2) == "ÅJ"))
+			else if(temp.length() >= 2+j && (temp.substr(j,2) == "ÔøΩÔøΩ" || temp.substr(j,2) == "ÔøΩJ"))
 			{
 				if(temp.substr(j-1,1) == sByteClose)
 				{
@@ -1379,7 +1459,7 @@ void pwrite_script_file(fstream & fs, vector<string> & data)
 					j = 0;
 				}
 			}
-			else if(temp.substr(j,2) == "ÅK" || temp.substr(j,2) == "°Î" )//|| temp.substr(j,2) == "°¨")
+			else if(temp.substr(j,2) == "ÔøΩK" || temp.substr(j,2) == "ÔøΩÔøΩ" )//|| temp.substr(j,2) == "ÔøΩÔøΩ")
 			{
 				if(temp.substr(j-1,1) == sByteClose)
 				{
@@ -1421,6 +1501,110 @@ void convert_table_from_to(vector<string>& x, vector<string>& y)
 	save_table_file(fs);
 	fs.close();
 	SetCursor (LoadCursor (NULL, IDC_ARROW));
+}
+
+// ---- Parallel translate ----
+
+struct TranslateJob {
+	vector<string>* pData;
+	char*           pProc;
+	int             iStart;
+	int             iEnd;
+};
+
+static DWORD WINAPI TranslateJobThread(LPVOID lpParam) {
+	TranslateJob* j = (TranslateJob*)lpParam;
+	translate(*j->pData, j->pProc, j->iStart, j->iEnd, false);
+	return 0;
+}
+
+void translate_parallel(vector<string>& data) {
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	int nCores = (int)si.dwNumberOfProcessors;
+	int total  = (int)data.size();
+	if(nCores < 2 || total < 20000) {
+		translate(data);
+		return;
+	}
+	if(nCores > 8) nCores = 8;
+
+	const int MARGIN = 3;
+	int chunkSize = total / nCores;
+
+	// processed[] marks elements already handled by a thread
+	char* processed = new char[total];
+	memset(processed, 0, total);
+
+	TranslateJob* jobs    = new TranslateJob[nCores];
+	HANDLE*       threads = new HANDLE[nCores];
+	int           nThreads = 0;
+
+	for(int t = 0; t < nCores; t++) {
+		int iStart = t * chunkSize;
+		int iEnd   = (t == nCores-1) ? total : (t+1)*chunkSize - MARGIN;
+		if(t > 0) iStart += MARGIN;
+		if(iEnd < iStart) iEnd = iStart;
+		jobs[t].pData  = &data;
+		jobs[t].pProc  = processed;
+		jobs[t].iStart = iStart;
+		jobs[t].iEnd   = iEnd;
+		HANDLE h = CreateThread(NULL, 0, TranslateJobThread, &jobs[t], 0, NULL);
+		if(h) threads[nThreads++] = h;
+	}
+
+	// Wait with message pumping so the UI stays responsive during parallel translate
+	if(nThreads > 0) {
+		DWORD r;
+		do {
+			r = MsgWaitForMultipleObjects((DWORD)nThreads, threads, TRUE, 100, QS_ALLINPUT);
+			if(r == WAIT_OBJECT_0 + (DWORD)nThreads) {
+				// Message available ‚Äî pump it so the Cancel button and progress dialog work
+				MSG _msg;
+				while(PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE)) {
+					TranslateMessage(&_msg);
+					DispatchMessage(&_msg);
+				}
+			} else if(r == WAIT_TIMEOUT) {
+				// Periodic pump + progress step
+				if(progress1 != NULL) StepProgress(progress1);
+				MSG _msg;
+				while(PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE)) {
+					TranslateMessage(&_msg);
+					DispatchMessage(&_msg);
+				}
+			}
+		} while(r != WAIT_OBJECT_0);
+	}
+	for(int t = 0; t < nThreads; t++) CloseHandle(threads[t]);
+
+	// Sequential cleanup for the MARGIN-sized gaps at each chunk boundary
+	for(int t = 0; t < nCores-1; t++) {
+		int bStart = (t+1)*chunkSize - MARGIN;
+		int bEnd   = (t+1)*chunkSize + MARGIN;
+		if(bEnd > total) bEnd = total;
+		translate(data, processed, bStart, bEnd, false);
+	}
+
+	delete[] threads;
+	delete[] jobs;
+	delete[] processed;
+
+	// Restore bJPuncSwitch state (translate() does this per-call; redo here for safety)
+	if(tvHandakuten.hex.length() == 0 && tvDakuten.hex.length() == 0)
+		bJPuncSwitch = bJPuncSwitch; // no-op; each thread already restored it
+
+	// Single compaction over the whole array
+	if(bSplitMultiByte) {
+		int w = 0;
+		for(int k = 0; k < total; k++) {
+			if(data[k].length() > 0) {
+				if(w != k) data[w] = data[k];
+				w++;
+			}
+		}
+		while((int)data.size() > w) data.pop_back();
+	}
 }
 
 #endif

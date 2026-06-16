@@ -40,6 +40,7 @@ public:
 	void SetExpandBy(long nExpandBy);
 	T& operator[](long iIndex) {return m_pT[iIndex];}
 	T& operator[](int iIndex) {return m_pT[iIndex];}
+	T& operator[](__int64 iIndex) {return m_pT[(long)iIndex];}
 	FileVector<T>& operator=(FileVector<T>& v);
 	void Reset();
 	long blContainsRef(T& elem);

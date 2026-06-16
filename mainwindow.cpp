@@ -30,7 +30,6 @@
 //of the copyright holder.
 
 #include "mainwindow.h"
-#include "fstream.h"
 #include <string.h>
 
 //takes filestream
@@ -226,6 +225,14 @@ int Translhextion::load_file (char* fFileName)
 			vHighlights = vEmpty;
 			vDTEs = vEmpty;
 			
+			if (iMemoryLimitMB > 0 && iFileLength > (__int64)iMemoryLimitMB * 1024 * 1024)
+			{
+				char cBuf[256];
+				sprintf(cBuf, "This file is %ld MB, which exceeds the %d MB memory limit set in Preferences.\nIncrease the limit or set it to 0 to disable it.", iFileLength / (1024*1024), iMemoryLimitMB);
+				MessageBox(hwnd, cBuf, "File too large:", MB_OK | MB_ICONWARNING);
+				_close(iFileHandle);
+				return FALSE;
+			}
 			if (FileBuffer.SetLength (iFileLength) == TRUE)
 			{
 				SetCursor (LoadCursor (NULL, IDC_WAIT));
@@ -1703,7 +1710,7 @@ void Translhextion::update_window_status()
 				strcat (cBuf, "   Bits=");
 				unsigned char zzz=FileBuffer[iCurrentByte];
 				for(int i=0;i<8;i++)buf2[i]=((zzz>>i)&0x1?'1':'0');
-				for(i=0;i<4;i++)sswap(buf2[i],buf2[7-i]);
+				for(int i=0;i<4;i++)sswap(buf2[i],buf2[7-i]);
 				buf2[8]='\0';
 				strcat (cBuf, buf2);
 				if(bTableLoaded && bTableActive)
@@ -3649,6 +3656,7 @@ int Translhextion::read_ini_data ()
 		iResourceKey = RegQueryValueEx( hkeyKEY, "bOpenReadOnly", NULL, NULL, (BYTE*) &bOpenReadOnly, &datasize );
 		iResourceKey = RegQueryValueEx( hkeyKEY, "bDefBytemark", NULL, NULL, (BYTE*) &bDefByteMark, &datasize );
 		iResourceKey = RegQueryValueEx( hkeyKEY, "bDiscardChangesSave", NULL, NULL, (BYTE*) &bDiscardChangesSave, &datasize );
+		iResourceKey = RegQueryValueEx( hkeyKEY, "iMemoryLimitMB", NULL, NULL, (BYTE*) &iMemoryLimitMB, &datasize );
 		cTextColor = iTextColorValue;
 		cBkColor = iBkColorValue;
 		cTextColorE = iTextColorEValue;
@@ -3772,6 +3780,7 @@ int Translhextion::save_ini_data ()
 		RegSetValueEx( hkeyKEY, "bOpenReadOnly", 0, REG_DWORD, (CONST BYTE*) &bOpenReadOnly, sizeof( int ) );
 		RegSetValueEx( hkeyKEY, "bDefByteMark", 0, REG_DWORD, (CONST BYTE*) &bDefByteMark, sizeof( int ) );
 		RegSetValueEx( hkeyKEY, "bDiscardChangesSave", 0, REG_DWORD, (CONST BYTE*) &bDiscardChangesSave, sizeof( int ) );
+		RegSetValueEx( hkeyKEY, "iMemoryLimitMB", 0, REG_DWORD, (CONST BYTE*) &iMemoryLimitMB, sizeof( int ) );
 	
 		RegSetValueEx( hkeyKEY, "LeftByteSep", 0, REG_SZ, (CONST BYTE*) (char*) sByteOpen.c_str(), 2 );
 		RegSetValueEx( hkeyKEY, "RightByteSep", 0, REG_SZ, (CONST BYTE*) (char*) sByteClose.c_str(), 2 );
@@ -4047,11 +4056,11 @@ HRESULT ResolveIt( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 		hres = psl->QueryInterface(IID_IPersistFile, (void**)&ppf); 
 		if (SUCCEEDED(hres))
 		{ 
-			WORD wsz[MAX_PATH]; 
+			WCHAR wsz[MAX_PATH];
 
-			MultiByteToWideChar(CP_ACP, 0, lpszLinkFile, -1, wsz, MAX_PATH); 
+			MultiByteToWideChar(CP_ACP, 0, lpszLinkFile, -1, wsz, MAX_PATH);
 
-			hres = ppf->Load(wsz, STGM_READ); 
+			hres = ppf->Load(wsz, STGM_READ);
 			if (SUCCEEDED(hres))
 			{ 
 				
@@ -7554,7 +7563,12 @@ int Translhextion::thingy_copy ()
 				iProgressPos++;
 				if(progress1 != NULL && iProgressPos % iIncrementStep == 0)
 				{
-					StepProgress(progress1);	
+					StepProgress(progress1);
+					MSG _msg;
+					while(PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE)) {
+						TranslateMessage(&_msg);
+						DispatchMessage(&_msg);
+					}
 				}
 				vHexdoc[i - iDumpStart] = hex_char(FileBuffer[i]);
 			}
@@ -7564,6 +7578,7 @@ int Translhextion::thingy_copy ()
 			progress1 = NULL;
 			long filesize = vHexdoc.size();
 			bCleanScript = true;
+			bCancelDump = false;
 			progressdialog = CreateDialog(hInstance, MAKEINTRESOURCE (IDD_2PROGRESSDIALOG),hwnd,ProgressDialogProc);
 			SetWindowText(progressdialog,"Script Dump Progress...");
 			SetWindowText(GetDlgItem(progressdialog,IDC_PROGRESS1TITLE),"Translating...");
@@ -7588,7 +7603,7 @@ int Translhextion::thingy_copy ()
 			}
 			SetProgressStep(progress1,iIncrementStep);  
 			long numbytes = vHexdoc.size();
-			translate(vHexdoc);
+			translate_parallel(vHexdoc);
 			SetProgressPos(progress1,numbytes);
 			iProgressPos = 0;
 			SetProgressRange(progress2,0,vHexdoc.size());
@@ -7618,19 +7633,24 @@ int Translhextion::thingy_copy ()
 			DestroyWindow(progressdialog);
 			bCleanScript = false;
 			SetCursor (LoadCursor (NULL, IDC_ARROW));
-			string clipdata = "";
-			clipdata = "";
+			if(!bCancelDump) {
+			// Pre-calculate total length to avoid O(n²) string concatenation
 			int m = 0;
-			for(m = 0;m<vHexdoc.size();m++)
-			{
-				clipdata += vHexdoc[m];
-			}
-			HGLOBAL hGlobal = GlobalAlloc (GHND, clipdata.length());
+			int totalLen = 0;
+			for(m = 0;m<(int)vHexdoc.size();m++)
+				totalLen += vHexdoc[m].length();
+			HGLOBAL hGlobal = GlobalAlloc (GHND, totalLen + 1);
 			if (hGlobal != NULL)
 			{
 				SetCursor (LoadCursor (NULL, IDC_WAIT));
 				char* pd = (char*) GlobalLock (hGlobal);
-				strcpy(pd,clipdata.c_str());
+				int pos = 0;
+				for(m = 0;m<(int)vHexdoc.size();m++) {
+					int len = vHexdoc[m].length();
+					memcpy(pd + pos, vHexdoc[m].c_str(), len);
+					pos += len;
+				}
+				pd[pos] = 0;
 				GlobalUnlock (hGlobal);
 				OpenClipboard (hwnd);
 				EmptyClipboard ();
@@ -7640,6 +7660,8 @@ int Translhextion::thingy_copy ()
 			}
 			else
 				MessageBox (hwnd, "Not enough memory for copying.", "Copy error:", MB_OK | MB_ICONERROR);
+			bCancelDump = false;
+			} // end if(!bCancelDump)
 		}
 		else
 		{
@@ -11367,7 +11389,7 @@ BOOL CALLBACK ScanRelativeDialogProc (HWND hDialog, UINT iMsg, WPARAM wParam, LP
 								}
 							}
 							fs.close();
-							MessageBox (hDialog,(sFileName + " sucessfully generated.").c_str(), "Table Generation Complete", MB_OK);
+							MessageBox (hDialog,(sFileName + " successfully generated.").c_str(), "Table Generation Complete", MB_OK);
 						}
 						else
 						{
@@ -11427,7 +11449,7 @@ BOOL CALLBACK ScanRelativeDialogProc (HWND hDialog, UINT iMsg, WPARAM wParam, LP
 						{
 							mainwindow.save_relative_results(fs);
 							fs.close();
-							MessageBox (hDialog, ("Results saved sucessfully to " + sFileName).c_str(), "Notice:", MB_OK | MB_ICONINFORMATION);
+							MessageBox (hDialog, ("Results saved successfully to " + sFileName).c_str(), "Notice:", MB_OK | MB_ICONINFORMATION);
 						}
 						else
 						{
@@ -11728,7 +11750,7 @@ BOOL CALLBACK ValScanRelativeDialogProc (HWND hDialog, UINT iMsg, WPARAM wParam,
 						{
 							mainwindow.save_relative_results(fs);
 							fs.close();
-							MessageBox (hDialog, ("Results saved sucessfully to " + sFileName).c_str(), "Notice:", MB_OK | MB_ICONINFORMATION);
+							MessageBox (hDialog, ("Results saved successfully to " + sFileName).c_str(), "Notice:", MB_OK | MB_ICONINFORMATION);
 						}
 						else
 						{
@@ -12100,7 +12122,7 @@ int Translhextion::open_table ()
 		{
 			fstream fs;
 			sFileName = cFileName;
-			fs.open(sFileName.c_str(),ios::in|ios::nocreate);
+			fs.open(sFileName.c_str(),ios::in);
 			if (!fs.fail())
 			{
 				wread_table_file(fs);
@@ -12419,7 +12441,12 @@ int Translhextion::script_dump ()
 				iProgressPos++;
 				if(progress1 != NULL && iProgressPos % iIncrementStep == 0)
 				{
-					StepProgress(progress1);	
+					StepProgress(progress1);
+					MSG _msg;
+					while(PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE)) {
+						TranslateMessage(&_msg);
+						DispatchMessage(&_msg);
+					}
 				}
 				vHexdoc[i - iDumpStart] = hex_char(FileBuffer[i]);
 			}
@@ -12437,6 +12464,7 @@ int Translhextion::script_dump ()
 			{
 				bCleanScript = false;
 			}
+			bCancelDump = false;
 			progressdialog = CreateDialog(hInstance, MAKEINTRESOURCE (IDD_2PROGRESSDIALOG),hwnd,ProgressDialogProc);
 			SetWindowText(progressdialog,"Script Dump Progress...");
 			SetWindowText(GetDlgItem(progressdialog,IDC_PROGRESS1TITLE),"Translating...");
@@ -12460,7 +12488,7 @@ int Translhextion::script_dump ()
 				iIncrementStep = 2; 
 			}
 			SetProgressStep(progress1,iIncrementStep);  
-			translate(vHexdoc);
+			translate_parallel(vHexdoc);
 			SetProgressPos(progress1,numbytes);
 			iProgressPos = 0;
 			SetProgressRange(progress2,0,vHexdoc.size());
@@ -12490,7 +12518,7 @@ int Translhextion::script_dump ()
 			DestroyWindow(progressdialog);
 			bCleanScript = false;
 			SetCursor (LoadCursor (NULL, IDC_ARROW));
-			if(bDumpToFile)
+			if(!bCancelDump && bDumpToFile)
 			{
 				fstream fs;
 				fs.open(sFileName.c_str(),ios::out);
@@ -12520,7 +12548,7 @@ int Translhextion::script_dump ()
 					}
 					SetCursor (LoadCursor (NULL, IDC_ARROW));
 					fs.close();
-					MessageBox (hwnd, ("Script dumped sucessfully to " + sFileName + "\n\n" + stringvalue(filesize) + " tile-bytes have been dumped.").c_str(), "Script Dump Complete", MB_OK);
+					MessageBox (hwnd, ("Script dumped successfully to " + sFileName + "\n\n" + stringvalue(filesize) + " tile-bytes have been dumped.").c_str(), "Script Dump Complete", MB_OK);
 					dumps++;
 				}
 				else
@@ -12528,9 +12556,9 @@ int Translhextion::script_dump ()
 					MessageBox (hwnd, "Could not save file.", "Script dump error:", MB_OK | MB_ICONERROR);
 					fs.close();
 				}
-				
+				bCancelDump = false;
 			}
-			else
+			else if(!bCancelDump)
 			{
 				if(bDumpClean)
 				{
@@ -12844,6 +12872,14 @@ switch (iMsg)
 	case WM_COMMAND:
 		switch (LOWORD (wParam))
 		{
+			case IDC_CANCEL_DUMP:
+			{
+				if(MessageBox(hDialog, "Are you sure you want to cancel?", "Cancel", MB_YESNO | MB_ICONQUESTION) == IDYES)
+				{
+					bCancelDump = true;
+				}
+				return TRUE;
+			}
 			default:
 			return FALSE;
 		}
@@ -13734,7 +13770,7 @@ void Translhextion::optimize_script_file()
 						iIncrementStep = 2; 
 					}
 					SetProgressStep(progress1,iIncrementStep);  
-					translate(vHexdoc);
+					translate_parallel(vHexdoc);
 					SetProgressPos(progress1,numbytes);
 					iProgressPos = 0;
 					numbytes = vHexdoc.size();
@@ -13840,7 +13876,7 @@ void Translhextion::optimize_script_file()
 						iIncrementStep = 2; 
 					}
 					SetProgressStep(progress1,iIncrementStep);  
-					translate(vHexdoc);
+					translate_parallel(vHexdoc);
 					SetProgressPos(progress1,numbytes);
 					iProgressPos = 0;
 					numbytes = vHexdoc.size();
@@ -13992,6 +14028,9 @@ BOOL CALLBACK ViewSettingsDialogProc (HWND hDialog, UINT iMsg, WPARAM wParam, LP
 			char buf2[16];
 			sprintf (buf2, "%d", iFontSizeSetting);
 			SetWindowText (GetDlgItem (hDialog, IDC_EDIT5), buf2);
+			char memBuf[16];
+			sprintf (memBuf, "%d", iMemoryLimitMB);
+			SetWindowText (GetDlgItem (hDialog, IDC_EDIT8), memBuf);
 			switch (iCharacterSetting)
 			{
 			case ANSI_FIXED_FONT:
@@ -14100,6 +14139,15 @@ BOOL CALLBACK ViewSettingsDialogProc (HWND hDialog, UINT iMsg, WPARAM wParam, LP
 				}
 				if (j != -1)
 					iFontSizeSetting = j;
+				char memBuf2[16];
+				if (GetDlgItemText (hDialog, IDC_EDIT8, memBuf2, 16) != 0)
+				{
+					int memVal = -1;
+					if (sscanf (memBuf2, "%d", &memVal) == 1 && memVal >= 0)
+						iMemoryLimitMB = memVal;
+					else
+						MessageBox (hDialog, "Memory limit must be a non-negative number (0 = unlimited).", "Settings error:", MB_OK | MB_ICONERROR);
+				}
 				if (IsDlgButtonChecked (hDialog, IDC_RADIO9) == BST_CHECKED)
 					iCharacterSetting = ANSI_FIXED_FONT;
 				else
@@ -14740,8 +14788,9 @@ BOOL CALLBACK AboutDialogProc (HWND hDialog, UINT iMsg, WPARAM wParam, LPARAM lP
 	case WM_INITDIALOG:
 		{
 			SetFocus(hDialog);
-			SetWindowText( GetDlgItem( hDialog, IDC_EDIT1 ),
-				sEmail.c_str());
+			SetWindowText( GetDlgItem( hDialog, IDC_EDIT2 ), (sName + " " + sVersion).c_str() );
+			SetWindowText( GetDlgItem( hDialog, IDC_EDIT3 ), sSubRelease.c_str() );
+			SetWindowText( GetDlgItem( hDialog, IDC_EDIT1 ), sEmail.c_str() );
 			SetWindowText( GetDlgItem( hDialog, IDC_BUTTON1 ), sHomepage.c_str() );
 			return TRUE;
 		}

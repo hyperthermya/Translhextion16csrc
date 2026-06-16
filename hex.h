@@ -63,6 +63,27 @@ inline unsigned char char_hex(string hex)
 	return (unsigned char) (( 16 * hex_value(x) ) + hex_value(y));
 }
 
+// Fast nibble decode from a single character — no string allocation
+inline int hex_nibble(char c) {
+	if(c >= '0' && c <= '9') return c - '0';
+	if(c >= 'A' && c <= 'F') return c - 'A' + 10;
+	if(c >= 'a' && c <= 'f') return c - 'a' + 10;
+	return 0;
+}
+
+// char_hex with two raw characters — no string allocation
+inline unsigned char char_hex_fast(char hi, char lo) {
+	return (unsigned char)((hex_nibble(hi) << 4) | hex_nibble(lo));
+}
+
+// True if s is exactly a 2-char uppercase hex pair (unprocessed byte marker)
+inline bool is_hex2(const string& s) {
+	if(s.length() != 2) return false;
+	char c0 = s[0], c1 = s[1];
+	return ((c0>='0'&&c0<='9')||(c0>='A'&&c0<='F')) &&
+	       ((c1>='0'&&c1<='9')||(c1>='A'&&c1<='F'));
+}
+
 //takes start, end, buffer, filestream
 //returns dumps hex from start to end into buffer
 void hex_dump(fstream& fs, vector<string>& data, long start, long end)

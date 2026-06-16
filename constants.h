@@ -2,8 +2,8 @@
 #define _CONSTANTS_H
 
 const string sName = "Translhextion";
-const string sVersion = "1.6c";
-const string sSubRelease = "";
+const string sVersion = "2.0";
+const string sSubRelease = "Resurrected by Chafurdaria";
 const string sHomepage = "I have no webspace :|";
 const string sEmail = "bennewit@uiuc.edu";
 const string FONT = "Januschan JOME Regular.ttf";

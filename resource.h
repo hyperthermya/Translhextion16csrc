@@ -141,6 +141,7 @@
 #define IDC_PROGRESS8TITLE              1067
 #define IDC_BYTES                       1067
 #define IDC_RADIO11                     1069
+#define IDC_CANCEL_DUMP                 1070
 #define IDM_OPEN                        40002
 #define IDM_NEW                         40003
 #define IDM_TOP                         40004
@@ -248,6 +249,7 @@
 #define IDM_HIDE_HEX                    40171
 #define IDM_IME                         40172
 #define IDM_OFFSETMODE                  40173
+#define IDC_EDIT8                       1070
 
 // Next default values for new objects
 // 
@@ -255,7 +257,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        167
 #define _APS_NEXT_COMMAND_VALUE         40174
-#define _APS_NEXT_CONTROL_VALUE         1070
+#define _APS_NEXT_CONTROL_VALUE         1071
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

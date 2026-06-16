@@ -17,7 +17,12 @@
 /*MFC*/
 
 /*ANSI Includes*/
-#include <iostream.h>
+#include <iostream>
+using std::ostream;
+using std::istream;
+using std::cerr;
+using std::endl;
+using std::ios;
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
@@ -204,6 +209,7 @@ extern string stringvalue(long n);
 
 #line 589 "bstring.cpp"
 extern string stringvalue(double d);
+extern string stringvalue(__int64 n);
 
 #line 600 "bstring.cpp"
 extern void getline(istream& is, string& r);

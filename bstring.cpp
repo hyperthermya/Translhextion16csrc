@@ -595,6 +595,12 @@ EXPORT string stringvalue(double d)
    return string(cBuf);
 }
 
+EXPORT string stringvalue(__int64 n)
+{  char cBuf[24];
+   sprintf(cBuf, "%I64d", n);
+   return string(cBuf);
+}
+
 /*...........................................................................*/
 
 EXPORT void getline(istream& is, string& r)
