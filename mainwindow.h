@@ -56,6 +56,8 @@ using std::ofstream;
 #include "progress.h"
 #include "strutil.h"
 #include "table.h"
+#include "pointerlistmodel.h"
+#include "sectionlistmodel.h"
 
 #include "filevect.cpp"
 

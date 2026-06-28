@@ -2,6 +2,21 @@
 #define _GLOBALS_H
 
 #include "structs.h"
+#include <map>
+#include <set>
+#include <utility>
+#include <vector>
+
+// Extended bookmark with section support
+struct ExtendedBookmark
+{
+	__int64 offset;
+	string name;
+	COLORREF color;
+};
+
+// Forward declarations for pointer/section types
+// Actual implementations are in pointerlistmodel.cpp and sectionlistmodel.cpp
 
 unsigned char cBitValue;
 char TypeOfCurrent;
@@ -97,8 +112,6 @@ int iLastDumpTarget = 0;
 int iBytesPerLine;
 int iOffsetMode = STANDARDHEX;
 int SNESHEADER = 512;
-//int iOldAutosize = 0;
-//int iOldBytesPerLine = 0;
 int iLastRelativeValue = -1;
 int iRealTable = 0;
 __int64 iCutOffset;
@@ -175,7 +188,6 @@ vector<int> viEmpty;
 vector<relativescandata> vScanData;
 vector<relation> vRelativeOffsets;
 vector<int> vValueList;
-//vector<string> vHighlights;
 vector<linkedvalue> vLinked;
 vector<string> vIMEBytes;
 vector<string> vTableFileLeft;
@@ -185,10 +197,12 @@ vector<string> vHighlights;
 vector<string> vDTEs;
 vector<bool> vbEmpty;
 vector<tablevalue> vMultiByteTableOut;
+
+#include "modeldata.h"
+
 bool bCancelDump = false;
 HWND hMainWnd;
 HWND progress1 = NULL;
 HWND progress2 = NULL;
-
 
 #endif

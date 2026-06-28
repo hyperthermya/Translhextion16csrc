@@ -1,6 +1,6 @@
 # Translhextion 2.0 — Resurrected by Hyperthermya
 
-A hex editor built for ROM hacking, originally written by Brian Bennewitz (1999–2001) and later packaged with HTML help by Kitsune Sniper. This fork picks up where the original source left off: compiled cleanly under a modern toolchain, with a handful of targeted fixes and performance improvements applied to the critical paths.
+A hex editor built for ROM hacking, originally written by Brian Bennewitz (1999–2001) and later packaged with HTML help by Kitsune Sniper. This fork picks up where the original source left off: compiled cleanly under a modern toolchain, with additional improvements aligned with the RTHextion evolution.
 
 ## What this is
 
@@ -16,7 +16,35 @@ The original source compiled under Visual C++ 6.0 but needed some attention to r
 
 **Memory limit setting** — added a configurable file-load memory cap under Preferences (Options → Preferences, or Ctrl+I). The default is 512 MB. Set it to 0 to disable the check entirely. The setting persists to the registry alongside all other preferences. This is mainly useful if you're working on a machine with limited RAM and want the editor to refuse oversized files instead of hanging while it tries to allocate them.
 
-**Version bump** — `constants.h` was updated to version `2.0` with the `Resurrected by Hyperthermya` sub-release tag, which shows up in the About box.
+**Pointer/section data models (backend only, not wired up yet)** — `PointerListModel` and `SectionListModel` (`pointerlistmodel.h/cpp`, `sectionlistmodel.h/cpp`) add bidirectional pointer lookup with configurable width and hierarchical, colored sections, modeled after RTHextion's equivalents. There is no menu item, dialog, or rendering hook that uses them yet — see "RTHextion comparison and roadmap" below for what's left.
+
+**Change tracking scaffolding** — `models.cpp` adds position-tracking globals for a future "Changes" list; nothing populates them yet.
+
+## RTHextion comparison and roadmap
+
+[RTHextion](https://github.com/road-t/RTHextion) is a from-scratch Qt6 rewrite by Ilya Annikov — not a fork of this codebase. It shares Translhextion's purpose (ROM translation hex editing) but rebuilds everything on top of Qt: cross-platform (Windows/macOS/Linux), modular `src/{dialogs,dockwidgets,document,hexeditor,utils}` tree, `QUndoStack`-based undo/redo, multi-tab sessions, dockable Sections/Pointers/Tables/Changes widgets, a `.rthp` project file bundling multiple translation tables + pointers + original-data snapshots, ROM-type auto-detection for ~20 retro platforms, encoding auto-detection, virtual formatting, semi-automatic table generation, IPS patch import/export, and a 7-language UI with light/dark theming.
+
+(For reference, [hayate891/translhextion](https://github.com/hayate891/translhextion) was checked too — it's a minimal 3-commit fork of the original VC6 source that fixes signed/unsigned bugs in `FileVector<T>` and `mainwindow.cpp` by changing `size_t` indices to `long`. This codebase's `filevect.h` already uses `long` throughout, so that fix doesn't apply here — it was presumably already part of the 1.6c base this fork started from.)
+
+Porting RTHextion wholesale isn't realistic without rewriting this codebase on Qt — that's a different, much larger project. What's actually portable to this Win32/VC6 architecture, roughly in order of effort:
+
+**Already started, needs UI wiring (cheapest wins):**
+- Pointer model: hook `pointerrender.h`'s helpers into `paint()` for hex-view highlighting, add a Win32 list view (dialog or toolbar panel) to list/add/remove pointers, and call `PointerListModel::addPointer`/`dropPointer` from the existing find/replace and script-insert code paths so pointers auto-update when bytes shift.
+- Section model: same pattern — a list/tree view panel, and a `colorAtOffset()` call from `paint()`'s background-fill logic.
+- Multi-table support (`DocTableEntry`): wire to the existing single-table loader in `table.h`; needs a simple table-switcher (combo box or list) instead of RTHextion's dock widget.
+- Change tracking: call `markPositionChanged()` from the existing byte-write paths (`SetAt`/`InsertAt` callers in `mainwindow.cpp`) and add a simple "Changes" list dialog.
+
+**Self-contained, no UI dependency, moderate effort:**
+- ROM-type/byte-order auto-detection: a static extension→type table plus header-sniffing for ambiguous `.bin`/`.rom`, similar to RTHextion's `romdetect.h` — straightforward to port as plain C++ data + a function, no Qt needed.
+- IPS patch generation/import: self-contained binary diff format: feasible as a standalone function pair over `FileVector`.
+- Original-data preservation: keep a second read-only copy of the loaded bytes (or just re-read from disk) to diff against current edits for a "compare to original" view.
+- Lightweight project file: serialize the pointer/section snapshot methods (`snapshotPointers`/`restorePointers`, already stubbed) plus the active table path into a small text/INI-style file, extending the existing registry-based preference persistence rather than inventing a binary format.
+
+**Large, likely not worth it without a bigger rewrite:**
+- True multi-tab workspace with persisted session and dockable panels — Win32 has no built-in equivalent to Qt's `QDockWidget`/`QTabWidget`; this would mean building custom MDI-style window management from scratch.
+- Generic command-pattern undo/redo (RTHextion's `CharCommand`/`QUndoStack`) — the current code has no undo concept at all; retrofitting one means touching every edit call site across `mainwindow.cpp`. Worth doing eventually, but it's the biggest single item here.
+- Encoding auto-detection with the breadth of RTHextion's `encodingdetect.h` (CJK/Shift-JIS/EUC-JP/Windows-1251/UTF-8 with iconv fallback) — approximable with `IsTextUnicode`/`MultiByteToWideChar` heuristics, but won't match Qt's `QStringDecoder`-based detection without significant work.
+- Cross-platform support — out of scope by design; this fork is Win32-only.
 
 ## Building
 
